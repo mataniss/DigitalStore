@@ -7,35 +7,48 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SQLiteJDBC {
-    public static void queryDatabase() {
-        String url = "jdbc:sqlite:myDB.db";
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-            System.out.println("Connected to the SQLite database.");
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM tablename;");
+    public static final String dbURL = "jdbc:sqlite:myDB.db";
+    public static Connection con;
 
-            while (rs.next()) {
-                System.out.println(rs.getInt("column1") +  "\t" +
-                        rs.getString("column2") + "\t" +
-                        rs.getDouble("column3"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
+    public static void connectToDB() {
+        try {
+            // create a connection to the database
+            con = DriverManager.getConnection(dbURL);
+            System.out.println("Connection with db was created successfully");
+        } catch (SQLException ex) {
+           System.err.println(ex.toString());
         }
     }
 
-    public static void main(String[] args) {
-        queryDatabase();
-        System.out.println("query finished");
+    public static ResultSet executeQuery(String sqlQuery) throws SQLException {
+        Statement st = null;
+        ResultSet rs = null;
+        st = con.createStatement();
+        rs = st.executeQuery(sqlQuery);
+        return rs;
+
+    }
+
+    public static int executeUpdateSQL(String sqlQuery) throws SQLException
+    {
+        int returnedRow = -1;
+        Statement st = con.createStatement();
+        returnedRow = st.executeUpdate(sqlQuery);
+        return returnedRow;
+    }
+
+    public static void closeDBConnection() {
+        try {
+            con.close();
+        } catch (SQLException ex) {
+            System.err.println(ex.toString());
+        }
+    }
+
+
+    public static void main(String[] args) throws SQLException {
+        connectToDB();
+        ResultSet results= executeQuery("SELECT * FROM PRODUCTS");
+        System.out.println("done");
     }
 }

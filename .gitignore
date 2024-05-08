@@ -1,2 +1,4 @@
 .DS_Store
+myDB.db
+myDB.db-journal
 .idea/
