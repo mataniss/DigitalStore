@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -13,7 +15,7 @@ public class ProductController {
     private ProductRepository productRepo;
 
     @GetMapping("/")
-    public Product[] listProducts(){
+    public ArrayList<Product> listProducts(){
         return productRepo.listProducts();
     }
 //    public Product createProduct(@RequestBody Product product) {
