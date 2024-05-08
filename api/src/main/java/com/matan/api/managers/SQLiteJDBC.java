@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SQLiteJDBC {
-    public static final String dbURL = "jdbc:sqlite:myDB.db";
+    public static final String dbURL = "jdbc:sqlite:serverDB.db";
     public static Connection con;
 
     public static void connectToDB() {
@@ -46,9 +46,16 @@ public class SQLiteJDBC {
     }
 
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         connectToDB();
-        ResultSet results= executeQuery("SELECT * FROM PRODUCTS");
+        ResultSet results;
+        try{
+            results = executeQuery("SELECT * FROM PRODUCTS");
+            System.out.println("!!!!");
+        }
+        catch (Exception e){
+            System.err.println(e.toString());
+        }
         System.out.println("done");
     }
 }
