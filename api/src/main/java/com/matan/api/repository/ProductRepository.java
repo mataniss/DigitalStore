@@ -7,6 +7,7 @@ import com.matan.api.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.nio.LongBuffer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,9 +49,6 @@ public class ProductRepository {
         return productId;
     }
 
-//    public Optional<Product> getProductById(Long id) {
-//        return productRepository.findById(id);
-//    }
 
     public void deleteProduct(Long id) throws SQLException {
         //todo: verify user identity before deleting
@@ -78,11 +76,22 @@ public class ProductRepository {
 
     }
 
+    public Product listProduct(Long id) throws SQLException {
+        String sqlStatement = String.format("SELECT * FROM PRODUCTS WHERE id = %s", id);
+        ArrayList<Product>  products = listProducts(sqlStatement);
+        return products.get(0);
+    }
+
+
     public ArrayList<Product> listProducts() {
+        return listProducts("SELECT * FROM PRODUCTS") ;
+    }
+
+    public ArrayList<Product> listProducts(String sqlStatement) {
 
         ArrayList<Product> products = new ArrayList<Product>();
         try {
-            ResultSet rs = DBManager.executeQuery("SELECT * FROM PRODUCTS");
+            ResultSet rs = DBManager.executeQuery(sqlStatement);
             while (rs.next()) {
                 Long id =  rs.getLong("id");
                 String name = rs.getString("name");

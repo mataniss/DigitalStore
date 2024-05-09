@@ -19,6 +19,10 @@ public class ProductController {
     public ArrayList<Product> listProducts(){
         return productRepo.listProducts();
     }
+    @GetMapping("/{id}")
+    public Product listProducts(@PathVariable Long id) throws SQLException {
+        return productRepo.listProduct(id);
+    }
     @PostMapping("/")
     public Long createProduct(@RequestBody Product product) throws SQLException {
         return productRepo.saveProduct(product);
