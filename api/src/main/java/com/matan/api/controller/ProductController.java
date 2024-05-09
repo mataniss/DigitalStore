@@ -20,7 +20,7 @@ public class ProductController {
         return productRepo.listProducts();
     }
     @PostMapping("/")
-    public Product createProduct(@RequestBody Product product) throws SQLException {
+    public Long createProduct(@RequestBody Product product) throws SQLException {
         return productRepo.saveProduct(product);
     }
 

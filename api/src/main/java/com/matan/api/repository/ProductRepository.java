@@ -15,16 +15,15 @@ import java.util.ArrayList;
 
 @Repository
 public class ProductRepository {
-    public Product saveProduct(Product product) throws SQLException {
-        // Prepare the SQL statement
+    public Long saveProduct(Product product) throws SQLException {
+        ResultSet generatedKeys = null;
+        Long productId = null;
+            // Prepare the SQL statement
         LocalDateTime now = LocalDateTime.now();
-
         // Create a formatter
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         // Format the current date and time
         String formattedDateTime = now.format(formatter);
-
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
 
@@ -39,8 +38,18 @@ public class ProductRepository {
 
         // Execute the insert operation
         int affectedRows = pstmt.executeUpdate();
-        //todo: maybe return the product form the db with id
-        return null;
+        if (affectedRows > 0) {
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                productId = generatedKeys.getLong(1); // Retrieve the first field of the generated keys (typically the ID)
+                System.out.println("Insert successful, product ID: " + productId);
+            } else {
+                System.out.println("Insert successful, but no ID was returned.");
+            }
+        } else {
+           throw new Error("Insert failed, no rows affected.");
+        }
+        return productId;
     }
 
 //    public Optional<Product> getProductById(Long id) {
