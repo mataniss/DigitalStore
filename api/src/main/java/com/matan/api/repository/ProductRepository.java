@@ -6,14 +6,40 @@ import com.matan.api.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Repository
 public class ProductRepository {
-    public Product saveProduct(Product product) {
-//        return productRepository.save(product);
+    public Product saveProduct(Product product) throws SQLException {
+        // Prepare the SQL statement
+        LocalDateTime now = LocalDateTime.now();
+
+        // Create a formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Format the current date and time
+        String formattedDateTime = now.format(formatter);
+
+        String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
+
+        // Set parameters for the query
+        pstmt.setString(1, product.getName());
+        pstmt.setString(2, product.getDescription());
+        pstmt.setDouble(3,  product.getPrice());
+        pstmt.setLong(4,  product.getPublisherID());
+        pstmt.setString(5, product.getImage());
+        pstmt.setInt(6, product.getQuantity());
+        pstmt.setString(7,formattedDateTime);
+
+        // Execute the insert operation
+        int affectedRows = pstmt.executeUpdate();
+        //todo: maybe return the product form the db with id
         return null;
     }
 
@@ -55,9 +81,6 @@ public class ProductRepository {
             throw new RuntimeException(e);
         }
 
-//        Product [] products = new Product[2];
-//        products[0] = new Product(1L,"my product",2);
-//        products[1] = new Product(2L,"product name",3);
         return products;
     }
 }

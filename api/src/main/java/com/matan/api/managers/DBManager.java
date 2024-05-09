@@ -44,6 +44,9 @@ public class DBManager {
             System.err.println(ex.toString());
         }
     }
+    public static Connection getDBConnection(){
+        return con;
+    }
 
 
     public static void main(String[] args) {
