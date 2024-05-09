@@ -1,6 +1,7 @@
 package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
+import com.matan.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.matan.api.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,12 +19,7 @@ public class ProductRepository {
     public Long saveProduct(Product product) throws SQLException {
         ResultSet generatedKeys = null;
         Long productId = null;
-            // Prepare the SQL statement
-        LocalDateTime now = LocalDateTime.now();
-        // Create a formatter
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        // Format the current date and time
-        String formattedDateTime = now.format(formatter);
+
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
 
@@ -34,7 +30,7 @@ public class ProductRepository {
         pstmt.setLong(4,  product.getPublisherID());
         pstmt.setString(5, product.getImage());
         pstmt.setInt(6, product.getQuantity());
-        pstmt.setString(7,formattedDateTime);
+        pstmt.setString(7, Utils.getCurrentDateTime());
 
         // Execute the insert operation
         int affectedRows = pstmt.executeUpdate();
@@ -56,16 +52,30 @@ public class ProductRepository {
 //        return productRepository.findById(id);
 //    }
 
-    public void deleteProduct(Long id) {
-//        productRepository.deleteById(id);
+    public void deleteProduct(Long id) throws SQLException {
+        //todo: verify user identity before deleting
+        DBManager.deleteRowById("PRODUCTS",id);
     }
 
-    public Product updateProduct(Long id, Product productDetails) {
-//        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-//        product.setName(productDetails.getName());
-//        product.setPrice(productDetails.getPrice());
-//        return productRepository.save(product);
-        return null;
+    public void updateProduct(Long id, Product product) throws SQLException {
+        PreparedStatement pstmt = null;
+
+        String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, image = ?, quantity = ?, date = ? WHERE id = ?";
+        pstmt = DBManager.getDBConnection().prepareStatement(sql);
+
+        // Set parameters for the query
+        pstmt.setString(1, product.getName());
+        pstmt.setString(2, product.getDescription());
+        pstmt.setDouble(3, product.getPrice());
+        pstmt.setLong(4, product.getPublisherID());
+        pstmt.setString(5, product.getImage());
+        pstmt.setInt(6, product.getQuantity());
+        pstmt.setString(7, Utils.getCurrentDateTime());
+        pstmt.setLong(8, product.getId());
+
+        // Execute the update operation
+        int affectedRows = pstmt.executeUpdate();
+
     }
 
     public ArrayList<Product> listProducts() {

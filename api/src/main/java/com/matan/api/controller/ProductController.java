@@ -25,12 +25,12 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        return productRepo.updateProduct(id, productDetails);
+    public void updateProduct(@PathVariable Long id, @RequestBody Product productDetails) throws SQLException {
+         productRepo.updateProduct(id, productDetails);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) throws SQLException {
         productRepo.deleteProduct(id);
         return ResponseEntity.ok().build();
     }

@@ -1,10 +1,6 @@
 package com.matan.api.managers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DBManager {
     public static final String dbURL = "jdbc:sqlite:serverDB.db";
@@ -48,6 +44,12 @@ public class DBManager {
         return con;
     }
 
+
+    public static void deleteRowById(String table, Long id) throws SQLException {
+        executeUpdateSQL(String.format("DELETE FROM %S WHERE id = %s",table,id));
+    }
+
+    //todo: write a function that removes an item by id from db
 
     public static void main(String[] args) {
         connectToDB();
