@@ -101,7 +101,7 @@ public class ProductRepository {
                 Double price = rs.getDouble("price");
                 String date = rs.getString("date");
                 Long publisherID = rs.getLong("publisherID");
-                Product newProduct = new Product(id,name,description,image,date,publisherID,quantity,price);
+                Product newProduct = new Product(id, name, description, image, date, publisherID, price, quantity);
                 products.add(newProduct);
 
             }
