@@ -33,9 +33,9 @@ public class ProductController {
          productRepo.updateProduct(id, productDetails);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) throws SQLException {
-        productRepo.deleteProduct(id);
-        return ResponseEntity.ok().build();
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<?> deleteProduct(@PathVariable Long id) throws SQLException {
+//        productRepo.deleteProduct(id);
+//        return ResponseEntity.ok().build();
+//    }
 }
