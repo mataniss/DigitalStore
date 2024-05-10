@@ -68,6 +68,15 @@ public class DBManager {
         executeUpdateSQL(String.format("DELETE FROM %S WHERE id = %s",table,id));
     }
 
+    public static void closeConnection(Connection con) {
+        try {
+            con.close();
+        } catch (SQLException ex) {
+            System.err.println(ex.toString());
+        }
+    }
+
+
     //todo: write a function that removes an item by id from db
 
     public static void main(String[] args) {
