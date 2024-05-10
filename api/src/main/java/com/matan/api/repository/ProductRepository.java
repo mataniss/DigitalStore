@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Repository
 public class ProductRepository {
     public Long saveProduct(Product product,String Authorization) throws SQLException {
-        Long publisherID = Utils.validateToken(Authorization);
+        Long publisherID = Utils.validateJWT(Authorization);
         ResultSet generatedKeys = null;
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -39,7 +39,7 @@ public class ProductRepository {
     }
 
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
-        Long publisherID = Utils.validateToken(Authorization);
+        Long publisherID = Utils.validateJWT(Authorization);
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, image = ?, quantity = ?, date = ? WHERE id = ?";
         pstmt = DBManager.getDBConnection().prepareStatement(sql);

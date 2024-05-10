@@ -31,7 +31,7 @@ public class Utils {
     }
 
     private static final String SECRET_KEY = "javainuse-secret-key";
-    public static String generateToken(Long userID) {
+    public static String generateJWT(Long userID) {
         return Jwts.builder()
                 .setSubject(userID+ "")
                 .setIssuedAt(new Date())
@@ -40,7 +40,7 @@ public class Utils {
                 .compact();
     }
 
-    public static Long validateToken(String token) {
+    public static Long validateJWT(String token) {
         try {
             token = token.replaceFirst("^Bearer\\s+", ""); // Removes 'Bearer' and any whitespace after it
             Claims claims = Jwts.parser()

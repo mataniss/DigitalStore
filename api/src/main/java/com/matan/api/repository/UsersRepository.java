@@ -1,7 +1,6 @@
 package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
-import com.matan.api.model.Product;
 import com.matan.api.model.User;
 import com.matan.api.utils.Utils;
 import org.springframework.stereotype.Repository;
@@ -79,7 +78,7 @@ public class UsersRepository {
         User userInDB = getUserByUsername(user.getUsername());
         if(userInDB != null) {
             if(Utils.validatePassword(user.getPassword(),userInDB.getPassword())){
-                token = Utils.generateToken(userInDB.getId());
+                token = Utils.generateJWT(userInDB.getId());
             }
             else {
                 throw new Error("Incorrect password");
