@@ -2,24 +2,18 @@ package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
 import com.matan.api.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.matan.api.model.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.nio.LongBuffer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Repository
 public class ProductRepository {
     public Long saveProduct(Product product) throws SQLException {
         ResultSet generatedKeys = null;
-        Long productId = null;
 
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -34,18 +28,7 @@ public class ProductRepository {
         pstmt.setString(7, Utils.getCurrentDateTime());
 
         // Execute the insert operation
-        int affectedRows = pstmt.executeUpdate();
-        if (affectedRows > 0) {
-            generatedKeys = pstmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                productId = generatedKeys.getLong(1); // Retrieve the first field of the generated keys (typically the ID)
-                System.out.println("Insert successful, product ID: " + productId);
-            } else {
-                System.out.println("Insert successful, but no ID was returned.");
-            }
-        } else {
-           throw new Error("Insert failed, no rows affected.");
-        }
+        Long productId = DBManager.performInsertAndGetGeneratedID(pstmt);
         return productId;
     }
 
@@ -76,39 +59,36 @@ public class ProductRepository {
 
     }
 
-    public Product listProduct(Long id) throws SQLException {
+    public Product getProduct(Long id) throws SQLException {
+        Product product = null;
         String sqlStatement = String.format("SELECT * FROM PRODUCTS WHERE id = %s", id);
         ArrayList<Product>  products = listProducts(sqlStatement);
-        return products.get(0);
+        if(products.size() > 0) {
+            product =  products.get(0);
+        }
+        return product;
     }
 
 
-    public ArrayList<Product> listProducts() {
+    public ArrayList<Product> listProducts() throws SQLException {
         return listProducts("SELECT * FROM PRODUCTS") ;
     }
 
-    public ArrayList<Product> listProducts(String sqlStatement) {
-
+    public ArrayList<Product> listProducts(String sqlStatement) throws SQLException {
         ArrayList<Product> products = new ArrayList<Product>();
-        try {
-            ResultSet rs = DBManager.executeQuery(sqlStatement);
-            while (rs.next()) {
-                Long id =  rs.getLong("id");
-                String name = rs.getString("name");
-                String description = rs.getString("description");
-                String image = rs.getString("image");
-                Integer quantity = rs.getInt("quantity");
-                Double price = rs.getDouble("price");
-                String date = rs.getString("date");
-                Long publisherID = rs.getLong("publisherID");
-                Product newProduct = new Product(id, name, description, image, date, publisherID, price, quantity);
-                products.add(newProduct);
-
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        ResultSet rs = DBManager.executeQuery(sqlStatement);
+        while (rs.next()) {
+            Long id =  rs.getLong("id");
+            String name = rs.getString("name");
+            String description = rs.getString("description");
+            String image = rs.getString("image");
+            Integer quantity = rs.getInt("quantity");
+            Double price = rs.getDouble("price");
+            String date = rs.getString("date");
+            Long publisherID = rs.getLong("publisherID");
+            Product newProduct = new Product(id, name, description, image, date, publisherID, price, quantity);
+            products.add(newProduct);
         }
-
         return products;
     }
 }

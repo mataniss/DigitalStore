@@ -3,7 +3,6 @@ package com.matan.api.controller;
 import com.matan.api.model.Product;
 import com.matan.api.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -16,12 +15,12 @@ public class ProductController {
     private ProductRepository productRepo;
 
     @GetMapping("/")
-    public ArrayList<Product> listProducts(){
+    public ArrayList<Product> listProducts() throws SQLException {
         return productRepo.listProducts();
     }
     @GetMapping("/{id}")
     public Product listProducts(@PathVariable Long id) throws SQLException {
-        return productRepo.listProduct(id);
+        return productRepo.getProduct(id);
     }
     @PostMapping("/")
     public Long createProduct(@RequestBody Product product) throws SQLException {

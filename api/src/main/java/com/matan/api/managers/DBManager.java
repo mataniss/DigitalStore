@@ -44,6 +44,25 @@ public class DBManager {
         return con;
     }
 
+    public static Long performInsertAndGetGeneratedID(PreparedStatement pstmt) throws SQLException {
+        Long generatedID = null;
+        ResultSet generatedKeys = null;
+        // Execute the insert operation
+        int affectedRows = pstmt.executeUpdate();
+        if (affectedRows > 0) {
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                generatedID = generatedKeys.getLong(1); // Retrieve the first field of the generated keys (typically the ID)
+                System.out.println("Insert successful, generatedID: " + generatedID);
+            } else {
+                System.out.println("Insert successful, but no ID was returned.");
+            }
+        } else {
+            throw new Error("Insert failed, no rows affected.");
+        }
+        return generatedID;
+    }
+
 
     public static void deleteRowById(String table, Long id) throws SQLException {
         executeUpdateSQL(String.format("DELETE FROM %S WHERE id = %s",table,id));
