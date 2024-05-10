@@ -64,7 +64,7 @@ public class UsersRepository {
         ResultSet rs = DBManager.executeQuery(sqlStatement);
         while (rs.next()) {
             Long id =  rs.getLong("id");
-            String name = rs.getString("name");
+            String name = rs.getString("username");
             String hashedPassword = rs.getString("password");
             String email = rs.getString("email");
             User newUser = new User(id, name, hashedPassword, email);
@@ -72,5 +72,22 @@ public class UsersRepository {
         }
         return users;
 
+    }
+
+    public String login(User user) throws SQLException {
+        String token = null;
+        User userInDB = getUserByUsername(user.getUsername());
+        if(userInDB != null) {
+            if(Utils.validatePassword(user.getPassword(),userInDB.getPassword())){
+                token = Utils.generateToken(userInDB.getId());
+            }
+            else {
+                throw new Error("Incorrect password");
+            }
+        }
+        else {
+            throw new Error("Invalid username or password");
+        }
+        return token;
     }
 }

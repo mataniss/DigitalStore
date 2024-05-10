@@ -23,13 +23,13 @@ public class ProductController {
         return productRepo.getProduct(id);
     }
     @PostMapping("/")
-    public Long createProduct(@RequestBody Product product) throws SQLException {
-        return productRepo.saveProduct(product);
+    public Long createProduct( @RequestHeader String Authorization, @RequestBody Product product) throws SQLException {
+        return productRepo.saveProduct(product, Authorization);
     }
 
     @PutMapping("/{id}")
-    public void updateProduct(@PathVariable Long id, @RequestBody Product productDetails) throws SQLException {
-         productRepo.updateProduct(id, productDetails);
+    public void updateProduct(@RequestHeader String Authorization, @PathVariable Long id, @RequestBody Product productDetails) throws SQLException {
+         productRepo.updateProduct(id, productDetails, Authorization);
     }
 
 //    @DeleteMapping("/{id}")
