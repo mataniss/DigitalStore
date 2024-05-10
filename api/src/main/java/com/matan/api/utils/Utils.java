@@ -33,15 +33,16 @@ public class Utils {
     private static final String SECRET_KEY = "javainuse-secret-key";
     public static String generateToken(Long userID) {
         return Jwts.builder()
-                .setSubject(String.valueOf(userID))
+                .setSubject(userID+ "")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 900000)) // Token expires in 15 minutes
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // Token expires in 1 hour
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
-    public static Integer validateToken(String token) {
+    public static Long validateToken(String token) {
         try {
+            token = token.replaceFirst("^Bearer\\s+", ""); // Removes 'Bearer' and any whitespace after it
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
@@ -52,9 +53,9 @@ public class Utils {
             System.out.println("Issued at: " + claims.getIssuedAt());
             System.out.println("Expiration: " + claims.getExpiration());
 
-            return Integer.parseInt(claims.getSubject());
+            return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
-            System.out.println("Token validation error: " + e.getMessage());
+                System.out.println("Token validation error: " + e.getMessage());
             return null;
         }
     }

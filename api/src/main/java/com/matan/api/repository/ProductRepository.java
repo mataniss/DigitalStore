@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Repository
 public class ProductRepository {
     public Long saveProduct(Product product,String Authorization) throws SQLException {
-        //todo: use the Authorization to get the user id
+        Long publisherID = Utils.validateToken(Authorization);
         ResultSet generatedKeys = null;
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -22,7 +22,7 @@ public class ProductRepository {
         pstmt.setString(1, product.getName());
         pstmt.setString(2, product.getDescription());
         pstmt.setDouble(3,  product.getPrice());
-        pstmt.setLong(4,  product.getPublisherID());
+        pstmt.setLong(4,  publisherID);
         pstmt.setString(5, product.getImage());
         pstmt.setInt(6, product.getQuantity());
         pstmt.setString(7, Utils.getCurrentDateTime());
@@ -39,7 +39,7 @@ public class ProductRepository {
     }
 
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
-        //todo: use the Authorization to get the user id
+        Long publisherID = Utils.validateToken(Authorization);
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, image = ?, quantity = ?, date = ? WHERE id = ?";
         pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -48,7 +48,7 @@ public class ProductRepository {
         pstmt.setString(1, product.getName());
         pstmt.setString(2, product.getDescription());
         pstmt.setDouble(3, product.getPrice());
-        pstmt.setLong(4, product.getPublisherID());
+        pstmt.setLong(4, publisherID);
         pstmt.setString(5, product.getImage());
         pstmt.setInt(6, product.getQuantity());
         pstmt.setString(7, Utils.getCurrentDateTime());
