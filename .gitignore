@@ -1,4 +1,4 @@
 .DS_Store
 api/serverDB.db
 .idea/
-Api/images/
+Api/public/images/

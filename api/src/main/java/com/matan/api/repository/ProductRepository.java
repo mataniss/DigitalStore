@@ -19,7 +19,7 @@ import java.util.ArrayList;
 @Repository
 public class ProductRepository {
 
-    public static final String uploadDirectory = "images/";
+    public static final String uploadDirectory = "public/images";
     public Long saveProduct(Product product,String Authorization) throws SQLException {
         if(product.getQuantity()<0)
             throw new Error("Quantity cannot be negative");
