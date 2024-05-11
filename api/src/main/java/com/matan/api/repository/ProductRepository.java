@@ -13,6 +13,8 @@ import java.util.ArrayList;
 @Repository
 public class ProductRepository {
     public Long saveProduct(Product product,String Authorization) throws SQLException {
+        if(product.getQuantity()<0)
+            throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
         ResultSet generatedKeys = null;
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -33,12 +35,29 @@ public class ProductRepository {
     }
 
 
-    public void deleteProduct(Long id,String Authorization) throws SQLException {
-        //todo: verify user identity before deleting
+    public void deleteProduct(Long id) throws SQLException {
         DBManager.deleteRowById("PRODUCTS",id);
     }
 
+    public void updateProductQuantity(Long id , Integer quantity) throws SQLException {
+        if(quantity<0)
+            throw new Error("Quantity cannot be negative");
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE PRODUCTS SET  quantity = ? WHERE id = ?";
+        pstmt = DBManager.getDBConnection().prepareStatement(sql);
+
+        // Set parameters for the query
+        pstmt.setInt(1, quantity);
+        pstmt.setLong(2, id);
+
+        // Execute the update operation
+        int affectedRows = pstmt.executeUpdate();
+
+    }
+
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
+        if(product.getQuantity()<0)
+            throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, image = ?, quantity = ?, date = ? WHERE id = ?";
