@@ -56,7 +56,11 @@ public class Utils {
             return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
                 System.out.println("Token validation error: " + e.getMessage());
-            return null;
+            throw new Error("Invalid JWT");
         }
+    }
+
+    public static String getExtension(String filename) {
+        return filename.lastIndexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")) : "";
     }
 }
