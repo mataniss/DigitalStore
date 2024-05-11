@@ -4,6 +4,7 @@ import com.matan.api.model.Product;
 import com.matan.api.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,9 +33,8 @@ public class ProductController {
          productRepo.updateProduct(id, productDetails, Authorization);
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> deleteProduct(@PathVariable Long id) throws SQLException {
-//        productRepo.deleteProduct(id);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/uploadImage/{id}")
+    public String uploadFile(@RequestHeader String Authorization, @RequestParam("file") MultipartFile file, @PathVariable Long id) throws SQLException {
+        return productRepo.uploadImage(Authorization, file, id);
+    }
 }
