@@ -25,7 +25,7 @@ public class ProductRepository {
             throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
         ResultSet generatedKeys = null;
-        String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, image, quantity, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, quantity, date) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
 
         // Set parameters for the query
@@ -33,9 +33,8 @@ public class ProductRepository {
         pstmt.setString(2, product.getDescription());
         pstmt.setDouble(3,  product.getPrice());
         pstmt.setLong(4,  publisherID);
-        pstmt.setString(5, product.getImage());
-        pstmt.setInt(6, product.getQuantity());
-        pstmt.setString(7, Utils.getCurrentDateTime());
+        pstmt.setInt(5, product.getQuantity());
+        pstmt.setString(6, Utils.getCurrentDateTime());
 
         // Execute the insert operation
         Long productId = DBManager.performInsertAndGetGeneratedID(pstmt);
@@ -63,12 +62,23 @@ public class ProductRepository {
 
     }
 
+    public void updateProductImage(Long id , String image) throws SQLException {
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE PRODUCTS SET  image = ? WHERE id = ?";
+        pstmt = DBManager.getDBConnection().prepareStatement(sql);
+        // Set parameters for the query
+        pstmt.setString(1, image);
+        pstmt.setLong(2, id);
+        // Execute the update operation
+        int affectedRows = pstmt.executeUpdate();
+    }
+
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
         if(product.getQuantity()<0)
             throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
         PreparedStatement pstmt = null;
-        String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, image = ?, quantity = ?, date = ? WHERE id = ?";
+        String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, quantity = ?, date = ? WHERE id = ?";
         pstmt = DBManager.getDBConnection().prepareStatement(sql);
 
         // Set parameters for the query
@@ -76,10 +86,9 @@ public class ProductRepository {
         pstmt.setString(2, product.getDescription());
         pstmt.setDouble(3, product.getPrice());
         pstmt.setLong(4, publisherID);
-        pstmt.setString(5, product.getImage());
-        pstmt.setInt(6, product.getQuantity());
-        pstmt.setString(7, Utils.getCurrentDateTime());
-        pstmt.setLong(8, product.getId());
+        pstmt.setInt(5, product.getQuantity());
+        pstmt.setString(6, Utils.getCurrentDateTime());
+        pstmt.setLong(7, product.getId());
 
         // Execute the update operation
         int affectedRows = pstmt.executeUpdate();
@@ -119,28 +128,30 @@ public class ProductRepository {
         return products;
     }
 
-    private String getExtension(String filename) {
-        return filename.lastIndexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")) : "";
-    }
+
 
     public String uploadImage(String Authorization, MultipartFile file, Long productID) throws SQLException {
         Long publisherID = Utils.validateJWT(Authorization);
-        //todo: verify that the product exits and if yes update the image
-        //file name in the db for the product. also remove the image from
-        //the regular insert and update routes
-        if (file.isEmpty()) {
-            return "Failed to upload empty file";
-        }
+        Product product = getProduct(productID);
+        if(product.getPublisherID() == publisherID){
+            if (file.isEmpty()) {
+                return "Failed to upload empty file";
+            }
 
-        try {
-            // Generate a unique file name
-            String filename = UUID.randomUUID().toString() + getExtension(file.getOriginalFilename());
-            Path path = Paths.get(uploadDirectory + File.separator + filename);
-            Files.copy(file.getInputStream(), path); // Save the file to the specified directory
-            return "File uploaded successfully: " + filename;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Failed to upload file due to IOException: " + e.getMessage();
+            try {
+                // Generate a unique file name
+                String filename = UUID.randomUUID().toString() + Utils.getExtension(file.getOriginalFilename());
+                Path path = Paths.get(uploadDirectory + File.separator + filename);
+                Files.copy(file.getInputStream(), path); // Save the file to the specified directory
+                updateProductImage(productID, filename);
+                return "File uploaded successfully: " + filename;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Failed to upload file due to IOException: " + e.getMessage();
+            }
+        }
+        else {
+            throw new Error("You are not allowed to upload a file for a product that isn't yours!");
         }
 
 
