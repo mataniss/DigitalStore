@@ -48,7 +48,7 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    public class PerformLogin extends AsyncTask< Integer, Integer, String > {
+    public class PerformLogin extends AsyncTask< Integer, Integer, Boolean > {
         private  String username;
         private String password;
 
@@ -56,38 +56,32 @@ public class Login extends AppCompatActivity {
             this.username = username;
             this.password = password;
         }
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//        }
 
         @Override
-        protected String doInBackground(Integer...integers) {
+        protected Boolean doInBackground(Integer...integers) {
             try {
                 boolean result = HttpUtil.loginRequest(username,password);
                 System.out.println("Successful Login.");
+                return true;
             } catch (IOException | JSONException e) {
                 String message = "Login failed " + e.toString();
                 System.err.println(message);
-//                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
             }
-            return null;
+            return false;
         }
-//
-//        @Override
-//        protected void onProgressUpdate(Integer...values) {
-//            super.onProgressUpdate(values);
-//
-//
-//        }
 
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//
-//
-//        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            String message ;
+            if(result == true){
+                message = "Successful Login.";
+            }
+            else {
+                message = "Login failed";
+            }
+            Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+            //todo: start a new intent if the was a successful connect
+        }
     }
 
 }
