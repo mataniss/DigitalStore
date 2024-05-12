@@ -13,6 +13,10 @@
         android:theme="@style/Theme.DigitalStore"
         tools:targetApi="31">
         <activity
+            android:name=".Catalog"
+            android:exported="false"
+            android:theme="@style/Theme.DigitalStore" />
+        <activity
             android:name=".Login"
             android:exported="true">
             <intent-filter>
