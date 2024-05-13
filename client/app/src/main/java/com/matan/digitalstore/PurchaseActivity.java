@@ -1,6 +1,7 @@
 package com.matan.digitalstore;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 public class PurchaseActivity extends AppCompatActivity {
 
     private Long id;
+    private int maxQuantity;
     private int quantity;
     private ImageView productImage;
     private TextView productName;
@@ -47,13 +49,41 @@ public class PurchaseActivity extends AppCompatActivity {
         purchaseButton = findViewById(R.id.purchaseButton);
 
         id = getIntent().getLongExtra("id",-1);
-        quantity = getIntent().getIntExtra("quantity",-1);
+        maxQuantity = getIntent().getIntExtra("quantity",-1);
         productName.setText(getIntent().getStringExtra("name"));
         productDescription.setText(getIntent().getStringExtra("description"));
         productPrice.setText(getIntent().getDoubleExtra("price",-1) +"₪");
         String imageURL = HttpUtil.getImageURL(getIntent().getStringExtra("image"));
         Picasso.get().load(imageURL).into(productImage);
+        quantity = 1;
+        minusButton.setEnabled(false);
 
-        System.out.println("!!!");
+        minusButton.setOnClickListener(v -> {
+            if (quantity > 1) {
+                quantity--;
+                quantityText.setText(String.valueOf(quantity));
+                plusButton.setEnabled(true);
+            }
+            if(quantity == 1 )   minusButton.setEnabled(false);
+                else minusButton.setEnabled(true);
+
+        });
+
+        plusButton.setOnClickListener(v -> {
+            if (quantity < maxQuantity) {
+                quantity++;
+                quantityText.setText(String.valueOf(quantity));
+                minusButton.setEnabled(true);
+            }
+            if(quantity == maxQuantity )   plusButton.setEnabled(false);
+            else plusButton.setEnabled(true);
+        });
+
+        purchaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Implement purchase logic here
+            }
+        });
     }
 }
