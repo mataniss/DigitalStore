@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import okhttp3.MultipartBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,34 +28,70 @@ public class HttpUtil {
         // Create RequestBody
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
         RequestBody requestBody = RequestBody.create(jsonString, JSON);
-        jwtToken = postRequest("users/login", requestBody).toString();
+        jwtToken = postRequest("users/login", requestBody,false).string();
         return true;
     }
 
     public static ResponseBody postRequest(String url, RequestBody requestBody) throws IOException {
+        boolean sendJWT= false;
+        if(jwtToken!=null)
+            sendJWT = true;
+        return postRequest(url, requestBody, sendJWT);
+    }
+
+    public static ResponseBody postRequest(String url, RequestBody requestBody, boolean sendJWT) throws IOException {
         String fullUrl = baseURL + url;
-        Request request = new Request.Builder()
-                .url(fullUrl)
-                .post(requestBody)
-                .build();
+        Request request ;
+        if(sendJWT){
+            request = new Request.Builder()
+                    .url(fullUrl)
+                    .header("Authorization",jwtToken)
+                    .post(requestBody)
+                    .build();
+        }
+        else {
+            request = new Request.Builder()
+                    .url(fullUrl)
+                    .post(requestBody)
+                    .build();
+        }
+
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful())
             throw new IOException("Unexpected code " + response);
         return response.body();
         }
 
-        public static ResponseBody getRequest(String url) throws IOException {
+    public static ResponseBody getRequest(String url) throws IOException {
+        boolean sendJWT= false;
+        if(jwtToken!=null)
+            sendJWT = true;
+        return getRequest(url, sendJWT);
+    }
+
+        public static ResponseBody getRequest(String url, boolean sendJWT) throws IOException {
             String fullUrl = baseURL + url;
-            Request request = new Request.Builder()
-                    .url(fullUrl)
-                    .header("Authorization",jwtToken)
-                    .get()
-                    .build();
+            Request request;
+            if(sendJWT){
+                request = new Request.Builder()
+                        .url(fullUrl)
+                        .header("Authorization",jwtToken)
+                        .get()
+                        .build();
+            }
+             else {
+                request = new Request.Builder()
+                        .url(fullUrl)
+                        .get()
+                        .build();
+            }
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException("Unexpected code " + response);
             return response.body();
     }
+
+
 
     public static String getImageURL(String image) {
         return baseURL +"images/"+ image;

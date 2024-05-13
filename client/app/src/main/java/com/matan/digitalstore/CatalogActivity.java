@@ -43,7 +43,12 @@ public class CatalogActivity extends AppCompatActivity {
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }
-
+    @Override
+    protected  void onResume(){
+        super.onResume();
+        FetchProducts fetchProducts = new FetchProducts();
+        fetchProducts.execute();
+    }
     public class FetchProducts extends AsyncTask< Integer, Integer, ArrayList<Product> > {
 
         @Override
