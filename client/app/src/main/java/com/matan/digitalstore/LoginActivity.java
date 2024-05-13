@@ -19,7 +19,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-public class Login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     private EditText usernameField;
     private EditText passwordField;
     private Button loginButton;
@@ -82,7 +82,7 @@ public class Login extends AppCompatActivity {
             }
             Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
             //todo: start a new intent if the was a successful connect
-            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+            Intent i = new Intent(getApplicationContext(), CatalogActivity.class);
             startActivity(i);
         }
     }

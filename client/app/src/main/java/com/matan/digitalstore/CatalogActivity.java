@@ -1,9 +1,7 @@
 package com.matan.digitalstore;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,15 +16,13 @@ import com.google.gson.reflect.TypeToken;
 import com.matan.digitalstore.Utils.HttpUtil;
 import com.matan.digitalstore.model.Product;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 
-public class MainActivity extends AppCompatActivity {
+public class CatalogActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProductAdapter adapter;
 
@@ -34,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_catalog);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -72,9 +68,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 ArrayList<Product> products = gson.fromJson(responseBody.string(), productListType);
                 System.out.println("Products List was processed successfully");
-                //todo: display the products list in the activity
                 adapter = new ProductAdapter(getApplicationContext(), products);
-        //        adapter.setClickListener(this);
                 recyclerView.setAdapter(adapter);
 
             } catch (IOException e) {

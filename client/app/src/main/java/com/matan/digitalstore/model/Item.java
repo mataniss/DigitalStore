@@ -1,5 +1,8 @@
 package com.matan.digitalstore.model;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.Objects;
 
 public class Item {
@@ -10,6 +13,7 @@ public class Item {
     private String date;
     private Long publisherID;
     private double price;
+
 
     public Item(Long id, String name, String description, String image, String date, Long publisherID, double price) {
         this.id = id;
