@@ -30,12 +30,12 @@
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/plus_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:srcCompat="@drawable/plus" /> <!-- Replace '@drawable/ic_add' with your icon resource -->
+        app:srcCompat="@drawable/plus" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
