@@ -46,6 +46,7 @@ public class CatalogActivity extends AppCompatActivity {
     @Override
     protected  void onResume(){
         super.onResume();
+        //we want to update the products list when the activity is reloaded
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }
