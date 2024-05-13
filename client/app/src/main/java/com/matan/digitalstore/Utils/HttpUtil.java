@@ -57,4 +57,8 @@ public class HttpUtil {
                 throw new IOException("Unexpected code " + response);
             return response.body();
     }
+
+    public static String getImageURL(String image) {
+        return baseURL +"images/"+ image;
     }
+}

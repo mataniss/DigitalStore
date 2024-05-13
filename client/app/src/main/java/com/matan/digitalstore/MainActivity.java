@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,7 +27,8 @@ import java.util.ArrayList;
 import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
-
+    private RecyclerView recyclerView;
+    private ProductAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
+
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }
@@ -66,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<Product> products = gson.fromJson(responseBody.string(), productListType);
                 System.out.println("Products List was processed successfully");
                 //todo: display the products list in the activity
+                adapter = new ProductAdapter(getApplicationContext(), products);
+        //        adapter.setClickListener(this);
+                recyclerView.setAdapter(adapter);
 
             } catch (IOException e) {
                 System.err.println("An error occurred while parsing product list "+ e.toString());

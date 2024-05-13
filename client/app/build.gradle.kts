@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.google.code.gson:gson:2.8.9")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("com.squareup.picasso:picasso:2.71828")
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
