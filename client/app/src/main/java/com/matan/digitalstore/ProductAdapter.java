@@ -79,15 +79,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             System.out.println("clicked on product with id "+ product.getId());
             if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
             //start a new purchase activity with the properties of the current produt
-            Intent i = new Intent(context, PurchaseActivity.class);
-            i.putExtra("id",product.getId());
-            i.putExtra("name",product.getName());
-            i.putExtra("price",product.getPrice());
-            i.putExtra("image",product.getImage());
-            i.putExtra("description",product.getDescription());
-            i.putExtra("quantity",product.getQuantity());
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
+            Intent intent = new Intent(context, PurchaseActivity.class);
+            intent.putExtra("id",product.getId());
+            intent.putExtra("name",product.getName());
+            intent.putExtra("price",product.getPrice());
+            intent.putExtra("image",product.getImage());
+            intent.putExtra("description",product.getDescription());
+            intent.putExtra("quantity",product.getQuantity());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }
     }
 

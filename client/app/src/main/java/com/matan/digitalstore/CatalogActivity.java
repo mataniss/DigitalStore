@@ -44,36 +44,34 @@ public class CatalogActivity extends AppCompatActivity {
         fetchProducts.execute();
     }
 
-    public class FetchProducts extends AsyncTask< Integer, Integer, ResponseBody > {
+    public class FetchProducts extends AsyncTask< Integer, Integer, ArrayList<Product> > {
 
         @Override
-        protected ResponseBody doInBackground(Integer...integers) {
+        protected ArrayList<Product> doInBackground(Integer...integers) {
+            ArrayList<Product> products = new ArrayList<>();
+            Gson gson = new Gson();
+            Type productListType = new TypeToken<ArrayList<Product>>(){}.getType();
             ResponseBody responseBody= null;
             try {
                  responseBody = HttpUtil.getRequest("products/");
                 System.out.println("Products List was fetched successfully");
-                return responseBody;
+                //convert the response body to an arrayList of product
+                products = gson.fromJson(responseBody.string(), productListType);
+                System.out.println("Products List was processed successfully");
+                return products;
             } catch (IOException  e) {
                 String message = "Fetch failed " + e.toString();
                 System.err.println(message);
             }
-            return responseBody;
+            return products;
         }
 
         @Override
-        protected void onPostExecute(ResponseBody responseBody) {
-            //convert the response body to an arrayList of product
-            Gson gson = new Gson();
-            Type productListType = new TypeToken<ArrayList<Product>>(){}.getType();
-            try {
-                ArrayList<Product> products = gson.fromJson(responseBody.string(), productListType);
-                System.out.println("Products List was processed successfully");
-                adapter = new ProductAdapter(getApplicationContext(), products);
-                recyclerView.setAdapter(adapter);
+        protected void onPostExecute(ArrayList<Product> products) {
 
-            } catch (IOException e) {
-                System.err.println("An error occurred while parsing product list "+ e.toString());
-            }
+            adapter = new ProductAdapter(getApplicationContext(), products);
+            recyclerView.setAdapter(adapter);
+
         }
     }
 }

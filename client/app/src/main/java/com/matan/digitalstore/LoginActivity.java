@@ -62,8 +62,15 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Integer...integers) {
             try {
                 boolean result = HttpUtil.loginRequest(username,password);
-                System.out.println("Successful Login.");
-                return true;
+                if(result == true)
+                {
+                    System.out.println("Successful Login.");
+                    return true;
+                }
+                else {
+                    throw new Error("Login failed");
+                }
+
             } catch (IOException | JSONException e) {
                 String message = "Login failed " + e.toString();
                 System.err.println(message);
@@ -81,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                 message = "Login failed";
             }
             Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
-            //todo: start a new intent if the was a successful connect
             Intent i = new Intent(getApplicationContext(), CatalogActivity.class);
             startActivity(i);
         }
