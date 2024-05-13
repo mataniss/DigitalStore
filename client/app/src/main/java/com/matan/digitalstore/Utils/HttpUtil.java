@@ -44,4 +44,17 @@ public class HttpUtil {
             throw new IOException("Unexpected code " + response);
         return response.body();
         }
+
+        public static ResponseBody getRequest(String url) throws IOException {
+            String fullUrl = baseURL + url;
+            Request request = new Request.Builder()
+                    .url(fullUrl)
+                    .header("Authorization",jwtToken)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful())
+                throw new IOException("Unexpected code " + response);
+            return response.body();
+    }
     }

@@ -1,5 +1,6 @@
 package com.matan.digitalstore;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -81,6 +82,8 @@ public class Login extends AppCompatActivity {
             }
             Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
             //todo: start a new intent if the was a successful connect
+            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(i);
         }
     }
 
