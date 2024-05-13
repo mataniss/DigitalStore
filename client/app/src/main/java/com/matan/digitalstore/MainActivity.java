@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ResponseBody responseBody) {
             //convert the response body to an arrayList of product
             Gson gson = new Gson();
+            Type productListType = new TypeToken<ArrayList<Product>>(){}.getType();
             try {
                 ArrayList<Product> products = gson.fromJson(responseBody.string(), productListType);
                 System.out.println("Products List was processed successfully");
