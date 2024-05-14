@@ -92,13 +92,13 @@ public class PurchaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                PostProduct postProduct = new PostProduct();
-                postProduct.execute();
+                MakePurchase makePurchase = new MakePurchase();
+                makePurchase.execute();
             }
         });
     }
 
-    public class PostProduct extends AsyncTask< Integer, Integer, Long> {
+    public class MakePurchase extends AsyncTask< Integer, Integer, Long> {
 
         @Override
         protected Long doInBackground(Integer...integers) {
@@ -108,7 +108,7 @@ public class PurchaseActivity extends AppCompatActivity {
                  purchaseID = Long.valueOf(responseBody.string());
 
             } catch (IOException e) {
-                System.err.println("An error occurred while tryign to make purchase.");
+                System.err.println("An error occurred while trying to make purchase.");
             }
             return purchaseID;
         }

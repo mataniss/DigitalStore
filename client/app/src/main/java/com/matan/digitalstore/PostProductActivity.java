@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.matan.digitalstore.Utils.HttpUtil;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -20,8 +23,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+
+import okhttp3.ResponseBody;
 
 public class PostProductActivity extends AppCompatActivity {
     private EditText name, description, quantity, price;
@@ -126,5 +134,36 @@ public class PostProductActivity extends AppCompatActivity {
 
     private void submitProduct() {
         //todo: implement submit action
+        PostProduct postProduct = new PostProduct();
+        postProduct.execute();
+    }
+
+    public class PostProduct extends AsyncTask< Integer, Integer, Long> {
+
+        @Override
+        protected Long doInBackground(Integer...integers) {
+            Long productID = null;
+            try {
+                JSONObject json = new JSONObject();
+                json.put("name",name.getText());
+                json.put("price", price.getText());
+                json.put("quantity", quantity.getText());
+                json.put("description", description.getText());
+                ResponseBody responseBody = HttpUtil.postRequest("products/",json);
+                productID = Long.valueOf(responseBody.string());
+                //todo: if the product was posted successfully, upload the image if necessary
+
+            } catch (IOException | JSONException e) {
+                System.err.println("An error occurred while trying to post a product.");
+            }
+            return productID;
+        }
+
+        @Override
+        protected void onPostExecute(Long productID) {
+            //todo: if posting was successful finish the activity
+            //otherwise display an error
+
+        }
     }
 }

@@ -15,8 +15,8 @@ import okhttp3.ResponseBody;
 
 public class HttpUtil {
     private static final OkHttpClient client = new OkHttpClient();
-    private static String baseURL = "http://10.0.0.147:8080/";
-//    private static String baseURL = "http://192.168.1.147:8080/";
+//    private static String baseURL = "http://10.0.0.147:8080/";
+    private static String baseURL = "http://192.168.1.147:8080/";
 
     private static String jwtToken;
 
@@ -25,23 +25,25 @@ public class HttpUtil {
         JSONObject json = new JSONObject();
         json.put("username",username);
         json.put("password", password);
+        jwtToken = postRequest("users/login", json,false).string();
+
+        return true;
+    }
+
+    public static ResponseBody postRequest(String url, JSONObject json) throws IOException {
+        boolean sendJWT= false;
+        if(jwtToken!=null)
+            sendJWT = true;
+        return postRequest(url, json, sendJWT);
+    }
+
+    public static ResponseBody postRequest(String url, JSONObject json, boolean sendJWT) throws IOException {
         //Convert JsonObject to JSON String
         String jsonString = json.toString();
         // Create RequestBody
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
         RequestBody requestBody = RequestBody.create(jsonString, JSON);
-        jwtToken = postRequest("users/login", requestBody,false).string();
-        return true;
-    }
 
-    public static ResponseBody postRequest(String url, RequestBody requestBody) throws IOException {
-        boolean sendJWT= false;
-        if(jwtToken!=null)
-            sendJWT = true;
-        return postRequest(url, requestBody, sendJWT);
-    }
-
-    public static ResponseBody postRequest(String url, RequestBody requestBody, boolean sendJWT) throws IOException {
         String fullUrl = baseURL + url;
         Request request ;
         if(sendJWT){
