@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.matan.digitalstore.Utils.HttpUtil;
+import com.matan.digitalstore.Utils.Utils;
 import com.squareup.picasso.BuildConfig;
 
 import androidx.activity.EdgeToEdge;
@@ -33,12 +34,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 public class PostProductActivity extends AppCompatActivity {
     private EditText name, description, quantity, price;
     private ImageView imageView;
-    private Uri imageUri;
+    private Uri imageUri = null;
     Button uploadButton;
     Button submitButton;
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -162,9 +166,22 @@ public class PostProductActivity extends AppCompatActivity {
                 json.put("description", description.getText());
                 ResponseBody responseBody = HttpUtil.postRequest("products/",json);
                 productID = Long.valueOf(responseBody.string());
-                //todo: if the product was posted successfully, upload the image if necessary
+                // if the product was posted successfully, upload the image if necessary
+                if(imageUri != null){
+                    File file = Utils.uriToFile(getApplicationContext(), imageUri);
+                    if (file != null) {
+                        RequestBody fileBody = RequestBody.create(file, MediaType.parse(getApplicationContext().getContentResolver().getType(imageUri)));
 
-            } catch (IOException | JSONException e) {
+                        RequestBody requestBody = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("file", file.getName(), fileBody)
+                                .build();
+                        String imageUrl = "products/uploadImage/"+productID;
+                        ResponseBody imageResponse = HttpUtil.postRequest(imageUrl,requestBody,true);
+                    }
+                }
+
+                } catch (IOException | JSONException e) {
                 System.err.println("An error occurred while trying to post a product.");
             }
             return productID;
@@ -172,8 +189,13 @@ public class PostProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long productID) {
-            //todo: if posting was successful finish the activity
-            //otherwise display an error
+            if(productID == null){
+                Toast.makeText(getApplicationContext(),"an error occured while trying to post product..",Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(getApplicationContext(),"Product was posted successfully.",Toast.LENGTH_LONG).show();
+                finish();
+            }
 
         }
     }

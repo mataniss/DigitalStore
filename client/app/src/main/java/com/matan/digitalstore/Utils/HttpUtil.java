@@ -44,6 +44,11 @@ public class HttpUtil {
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
         RequestBody requestBody = RequestBody.create(jsonString, JSON);
 
+        return postRequest(url,requestBody,sendJWT);
+    }
+
+    public static ResponseBody postRequest(String url, RequestBody requestBody, boolean sendJWT) throws IOException {
+
         String fullUrl = baseURL + url;
         Request request ;
         if(sendJWT){
