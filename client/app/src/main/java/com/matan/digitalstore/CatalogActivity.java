@@ -1,7 +1,9 @@
 package com.matan.digitalstore;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.matan.digitalstore.Utils.HttpUtil;
@@ -25,6 +28,7 @@ import okhttp3.ResponseBody;
 public class CatalogActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProductAdapter adapter;
+    private FloatingActionButton plusBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,14 @@ public class CatalogActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
 
+        plusBtn = findViewById(R.id.new_product_btn);
+        plusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PostProductActivity.class);
+                startActivity(intent);
+            }
+        });
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }

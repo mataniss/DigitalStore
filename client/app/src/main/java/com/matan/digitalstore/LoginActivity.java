@@ -83,13 +83,15 @@ public class LoginActivity extends AppCompatActivity {
             String message ;
             if(result == true){
                 message = "Successful Login.";
+                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                Intent i = new Intent(getApplicationContext(), CatalogActivity.class);
+                startActivity(i);
             }
             else {
                 message = "Login failed";
+                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
             }
-            Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
-            Intent i = new Intent(getApplicationContext(), CatalogActivity.class);
-            startActivity(i);
+
         }
     }
 

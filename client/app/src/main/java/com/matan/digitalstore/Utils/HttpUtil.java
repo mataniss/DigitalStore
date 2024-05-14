@@ -15,7 +15,9 @@ import okhttp3.ResponseBody;
 
 public class HttpUtil {
     private static final OkHttpClient client = new OkHttpClient();
-    private static String baseURL = "http://192.168.1.147:8080/";
+    private static String baseURL = "http://10.0.0.147:8080/";
+//    private static String baseURL = "http://192.168.1.147:8080/";
+
     private static String jwtToken;
 
     public static boolean loginRequest(String username, String password) throws IOException, JSONException {

@@ -59,8 +59,11 @@ public class PurchaseActivity extends AppCompatActivity {
         productName.setText(getIntent().getStringExtra("name"));
         productDescription.setText(getIntent().getStringExtra("description"));
         productPrice.setText(getIntent().getDoubleExtra("price",-1) +"₪");
-        String imageURL = HttpUtil.getImageURL(getIntent().getStringExtra("image"));
-        Picasso.get().load(imageURL).into(productImage);
+        String image = getIntent().getStringExtra("image");
+        if(image != null && image.length()>0){
+            String imageURL = HttpUtil.getImageURL(image);
+            Picasso.get().load(imageURL).into(productImage);
+        }
         quantity = 1;
         minusButton.setEnabled(false);
 
