@@ -190,7 +190,7 @@ public class PostProductActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long productID) {
             if(productID == null){
-                Toast.makeText(getApplicationContext(),"an error occured while trying to post product..",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"an error occurred while trying to post product..",Toast.LENGTH_LONG).show();
             }
             else {
                 Toast.makeText(getApplicationContext(),"Product was posted successfully.",Toast.LENGTH_LONG).show();
