@@ -12,9 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.matan.digitalstore.Utils.HttpUtil;
+import com.squareup.picasso.BuildConfig;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -72,20 +76,27 @@ public class PostProductActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(PostProductActivity.this);
         builder.setTitle("Add Product Photo");
         builder.setItems(options, (dialog, item) -> {
+            //todo: create two new functions: one for taking a picture and one for chosing a photo from the library
             if (options[item].equals("Take Photo")) {
             if( hasCamera()==true){
                 Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePicture.resolveActivity(getPackageManager()) != null) {
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (photoFile != null) {
-                        imageUri = FileProvider.getUriForFile(this, "com.matan.digitalStore", photoFile);
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                    //we need to make sure that the app has access to camera before we can continue
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, REQUEST_IMAGE_CAPTURE);
+                    } else {
+                        // Continue with your code to open camera
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if (photoFile != null) {
+                            imageUri = FileProvider.getUriForFile(this, "com.matan.digitalstore.provider", photoFile);
+                            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                        }
                     }
                 }
                 else {
