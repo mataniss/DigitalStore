@@ -13,13 +13,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.Manifest;
-import android.content.pm.PackageManager;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.matan.digitalstore.Utils.HttpUtil;
 import com.matan.digitalstore.Utils.Utils;
-import com.squareup.picasso.BuildConfig;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,7 +64,7 @@ public class PostProductActivity extends AppCompatActivity {
         uploadButton = findViewById(R.id.uploadButton);
         submitButton = findViewById(R.id.submitButton);
 
-        uploadButton.setOnClickListener(v -> selectImage());
+        uploadButton.setOnClickListener(v -> showSelectImageDialog());
         submitButton.setOnClickListener(v -> submitProduct());
     }
 
@@ -74,42 +73,15 @@ public class PostProductActivity extends AppCompatActivity {
      * or to select from the local gallery. It opens a popup that that allows
      * him two chose one of these two options.
      */
-    private void selectImage() {
+    private void showSelectImageDialog() {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
-
         AlertDialog.Builder builder = new AlertDialog.Builder(PostProductActivity.this);
         builder.setTitle("Add Product Photo");
         builder.setItems(options, (dialog, item) -> {
-            //todo: create two new functions: one for taking a picture and one for chosing a photo from the library
             if (options[item].equals("Take Photo")) {
-            if( hasCamera()==true){
-                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePicture.resolveActivity(getPackageManager()) != null) {
-                    //we need to make sure that the app has access to camera before we can continue
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, REQUEST_IMAGE_CAPTURE);
-                    } else {
-                        // Continue with your code to open camera
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if (photoFile != null) {
-                            imageUri = FileProvider.getUriForFile(this, "com.matan.digitalstore.provider", photoFile);
-                            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                        }
-                    }
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"No camera was found.",Toast.LENGTH_LONG).show();
-                }
-            }
+                takePicture();
             } else if (options[item].equals("Choose from Gallery")) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto , PICK_IMAGE_REQUEST);
+                chosePictureFromCamera();
             } else if (options[item].equals("Cancel")) {
                 dialog.dismiss();
             }
@@ -117,8 +89,40 @@ public class PostProductActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void chosePictureFromCamera(){
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto , PICK_IMAGE_REQUEST);
+    }
 
-    private boolean hasCamera() {
+    private void takePicture(){
+        if(deviceHasCamera()== true) {
+            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePicture.resolveActivity(getPackageManager()) != null) {
+                //we need to make sure that the app has access to camera before we can continue
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAPTURE);
+                } else {
+                    // Continue with the code to open camera
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (photoFile != null) {
+                        imageUri = FileProvider.getUriForFile(this, "com.matan.digitalstore.provider", photoFile);
+                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                        startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                    }
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "No camera was found.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    private boolean deviceHasCamera() {
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
     private File createImageFile() throws IOException {
@@ -130,8 +134,6 @@ public class PostProductActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
-        // Save a file: path for use with ACTION_VIEW intents
         imageUri = Uri.fromFile(image);
         return image;
     }
@@ -139,16 +141,18 @@ public class PostProductActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(this).load(imageUri).into(imageView);
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageUri).into(imageView);
+        if( resultCode == RESULT_OK ){
+            if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
+                imageUri = data.getData();
+                Glide.with(this).load(imageUri).into(imageView);
+            } else if (requestCode == REQUEST_IMAGE_CAPTURE ) {
+                Glide.with(this).load(imageUri).into(imageView);
+            }
         }
+
     }
 
     private void submitProduct() {
-        //todo: implement submit action
         PostProduct postProduct = new PostProduct();
         postProduct.execute();
     }

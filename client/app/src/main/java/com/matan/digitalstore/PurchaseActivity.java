@@ -66,6 +66,8 @@ public class PurchaseActivity extends AppCompatActivity {
         }
         quantity = 1;
         minusButton.setEnabled(false);
+        if(maxQuantity == 1)
+            plusButton.setEnabled(false);
 
         minusButton.setOnClickListener(v -> {
             if (quantity > 1) {
