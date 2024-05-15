@@ -85,7 +85,7 @@ public class PurchaseActivity extends AppCompatActivity {
                 quantityText.setText(String.valueOf(selectedQuantity));
                 minusButton.setEnabled(true);
             }
-            if(selectedQuantity == product.getQuantity()  )   plusButton.setEnabled(false);
+            if(selectedQuantity == product.getQuantity())   plusButton.setEnabled(false);
             else plusButton.setEnabled(true);
         });
 
