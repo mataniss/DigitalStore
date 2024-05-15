@@ -1,7 +1,7 @@
 package com.matan.digitalstore;
 
 import com.matan.digitalstore.Utils.HttpUtil;
-import com.matan.digitalstore.model.Product;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.matan.digitalstore.model.Product;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -80,12 +81,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
             //start a new purchase activity with the properties of the current produt
             Intent intent = new Intent(context, PurchaseActivity.class);
-            intent.putExtra("id",product.getId());
-            intent.putExtra("name",product.getName());
-            intent.putExtra("price",product.getPrice());
-            intent.putExtra("image",product.getImage());
-            intent.putExtra("description",product.getDescription());
-            intent.putExtra("quantity",product.getQuantity());
+            intent.putExtra("product",product);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }

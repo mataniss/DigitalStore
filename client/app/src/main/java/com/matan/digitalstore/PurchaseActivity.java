@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.matan.digitalstore.Utils.HttpUtil;
+import com.matan.digitalstore.model.Product;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -23,9 +24,8 @@ import okhttp3.ResponseBody;
 
 public class PurchaseActivity extends AppCompatActivity {
 
-    private Long id;
-    private int maxQuantity;
-    private int quantity;
+    private int selectedQuantity;
+    private Product product;
     private ImageView productImage;
     private TextView productName;
     private TextView productDescription;
@@ -54,39 +54,38 @@ public class PurchaseActivity extends AppCompatActivity {
         plusButton = findViewById(R.id.plusButton);
         purchaseButton = findViewById(R.id.purchaseButton);
 
-        id = getIntent().getLongExtra("id",-1);
-        maxQuantity = getIntent().getIntExtra("quantity",-1);
-        productName.setText(getIntent().getStringExtra("name"));
-        productDescription.setText(getIntent().getStringExtra("description"));
-        productPrice.setText(getIntent().getDoubleExtra("price",-1) +"₪");
-        String image = getIntent().getStringExtra("image");
+        product = getIntent().getParcelableExtra("product");
+        productName.setText(product.getName());
+        productDescription.setText(product.getDescription());
+        productPrice.setText(product.getPrice() +"₪");
+        String image = product.getImage();
         if(image != null && image.length()>0){
             String imageURL = HttpUtil.getImageURL(image);
             Picasso.get().load(imageURL).into(productImage);
         }
-        quantity = 1;
+        selectedQuantity = 1;
         minusButton.setEnabled(false);
-        if(maxQuantity == 1)
+        if(product.getQuantity() == 1)
             plusButton.setEnabled(false);
 
         minusButton.setOnClickListener(v -> {
-            if (quantity > 1) {
-                quantity--;
-                quantityText.setText(String.valueOf(quantity));
+            if (selectedQuantity > 1) {
+                selectedQuantity--;
+                quantityText.setText(String.valueOf(selectedQuantity));
                 plusButton.setEnabled(true);
             }
-            if(quantity == 1 )   minusButton.setEnabled(false);
+            if(selectedQuantity == 1 )   minusButton.setEnabled(false);
                 else minusButton.setEnabled(true);
 
         });
 
         plusButton.setOnClickListener(v -> {
-            if (quantity < maxQuantity) {
-                quantity++;
-                quantityText.setText(String.valueOf(quantity));
+            if (selectedQuantity < product.getQuantity() ) {
+                selectedQuantity++;
+                quantityText.setText(String.valueOf(selectedQuantity));
                 minusButton.setEnabled(true);
             }
-            if(quantity == maxQuantity )   plusButton.setEnabled(false);
+            if(selectedQuantity == product.getQuantity()  )   plusButton.setEnabled(false);
             else plusButton.setEnabled(true);
         });
 
@@ -106,7 +105,7 @@ public class PurchaseActivity extends AppCompatActivity {
         protected Long doInBackground(Integer...integers) {
             Long purchaseID = null;
             try {
-                ResponseBody responseBody = HttpUtil.getRequest("purchase/makePurchase/"+id + "?quantity="+ quantity);
+                ResponseBody responseBody = HttpUtil.getRequest("purchase/makePurchase/"+product.getId() + "?quantity="+ selectedQuantity);
                  purchaseID = Long.valueOf(responseBody.string());
 
             } catch (IOException e) {
