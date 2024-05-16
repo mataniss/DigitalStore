@@ -1,0 +1,6 @@
+In order to build this application, run in the api project folder the following command:
+./gradlew clean build
+The project jar will be generated at /build/lib/
+You can then run the application with the command:
+java -jar /build/lib/api-0.0.1-SNAPSHOT.jar
+(change the file name according to the jar file name that was generated,)
