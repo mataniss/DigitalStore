@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,7 +64,7 @@ public class CatalogActivity extends AppCompatActivity {
         fetchProducts.execute();
     }
     public class FetchProducts extends AsyncTask< Integer, Integer, ArrayList<Product> > {
-
+        private String error;
         @Override
         protected ArrayList<Product> doInBackground(Integer...integers) {
             ArrayList<Product> products = new ArrayList<>();
@@ -78,17 +79,21 @@ public class CatalogActivity extends AppCompatActivity {
                 System.out.println("Products List was processed successfully");
                 return products;
             } catch (IOException  e) {
-                String message = "Fetch failed " + e.toString();
-                System.err.println(message);
+                error =  "Failed to fetch products: " + e.toString();
+                System.err.println(error);
             }
             return products;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
-
-            adapter = new ProductAdapter(getApplicationContext(), products);
-            recyclerView.setAdapter(adapter);
+            if(products!=null){
+                adapter = new ProductAdapter(getApplicationContext(), products);
+                recyclerView.setAdapter(adapter);
+            }
+            else{
+                Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
+            }
 
         }
     }

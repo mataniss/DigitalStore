@@ -55,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public class SignUpAction extends AsyncTask< Integer, Integer, Long> {
-
+        private String error;
         @Override
         protected Long doInBackground(Integer...integers) {
             Long userID = null;
@@ -71,7 +71,8 @@ public class SignUpActivity extends AppCompatActivity {
                 userID = Long.valueOf(responseBody.string());
 
             } catch (IOException | JSONException e) {
-                System.err.println("An error occurred during signup.");
+                error =  "An error occurred during signup: " + e.toString();
+                System.err.println(error);
             }
             return userID;
         }
@@ -79,8 +80,7 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long purchaseID) {
             if(purchaseID == null){
-                String message = "An error occurred during signup.";
-                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
             }
             else {
                 Toast.makeText(getApplicationContext(),"Sign up was successful.",Toast.LENGTH_LONG).show();

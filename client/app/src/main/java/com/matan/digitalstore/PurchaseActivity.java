@@ -122,7 +122,7 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
     public class MakePurchase extends AsyncTask< Integer, Integer, Long> {
-
+        private String error;
         @Override
         protected Long doInBackground(Integer...integers) {
             Long purchaseID = null;
@@ -131,7 +131,8 @@ public class PurchaseActivity extends AppCompatActivity {
                  purchaseID = Long.valueOf(responseBody.string());
 
             } catch (IOException e) {
-                System.err.println("An error occurred while trying to make purchase.");
+                error =  "An error occurred while trying to make purchase." + e.toString();
+                System.err.println(error);
             }
             return purchaseID;
         }
@@ -139,10 +140,12 @@ public class PurchaseActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long purchaseID) {
             if(purchaseID == null){
-                String message = "An error occurred while trying to make purchase";
-                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
             }
-            finish();
+            else{
+                Toast.makeText(getApplicationContext(),"Purchase was successful.",Toast.LENGTH_LONG).show();
+                finish();
+            }
 
         }
     }

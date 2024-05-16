@@ -177,7 +177,7 @@ public class PostProductActivity extends AppCompatActivity {
     }
 
     public class PostProduct extends AsyncTask< Integer, Integer, Long> {
-
+        private String error;
         @Override
         protected Long doInBackground(Integer...integers) {
             Long productID = null;
@@ -214,7 +214,8 @@ public class PostProductActivity extends AppCompatActivity {
                 }
 
                 } catch (IOException | JSONException e) {
-                System.err.println("An error occurred while trying to post a product.");
+                error =  "An error occurred while trying to post product: " + e.toString();
+                System.err.println(error);
             }
             return productID;
         }
@@ -222,7 +223,7 @@ public class PostProductActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long productID) {
             if(productID == null){
-                Toast.makeText(getApplicationContext(),"an error occurred while trying to post product..",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),error, Toast.LENGTH_LONG).show();
             }
             else {
                 Toast.makeText(getApplicationContext(),"Product was posted successfully.",Toast.LENGTH_LONG).show();

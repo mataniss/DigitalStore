@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     public class PerformLogin extends AsyncTask< Integer, Integer, Boolean > {
         private  String username;
         private String password;
-
+        private String error;
         public PerformLogin(String username, String password) {
             this.username = username;
             this.password = password;
@@ -82,8 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             } catch (IOException | JSONException e) {
-                String message = "Login failed " + e.toString();
-                System.err.println(message);
+                error =  "Login failed " + e.toString();
+                System.err.println(error);
             }
             return false;
         }
@@ -98,8 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
             }
             else {
-                message = "Login failed";
-                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),error,Toast.LENGTH_LONG).show();
             }
 
         }
