@@ -79,20 +79,13 @@ public class HttpUtil {
     public static ResponseBody postRequest(String url, RequestBody requestBody, boolean sendJWT) throws IOException {
 
         String fullUrl = baseURL + url;
-        Request request ;
+        Request.Builder builder = new Request.Builder()
+                .url(fullUrl)
+                .post(requestBody);
         if(sendJWT){
-            request = new Request.Builder()
-                    .url(fullUrl)
-                    .header("Authorization",jwtToken)
-                    .post(requestBody)
-                    .build();
+            builder.header("Authorization",jwtToken);
         }
-        else {
-            request = new Request.Builder()
-                    .url(fullUrl)
-                    .post(requestBody)
-                    .build();
-        }
+        Request request = builder.build();
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful())
@@ -128,20 +121,15 @@ public class HttpUtil {
 
         public static ResponseBody getRequest(String url, boolean sendJWT) throws IOException {
             String fullUrl = baseURL + url;
-            Request request;
-            if(sendJWT){
-                request = new Request.Builder()
-                        .url(fullUrl)
-                        .header("Authorization",jwtToken)
-                        .get()
-                        .build();
+            Request.Builder builder = new Request.Builder()
+                    .url(fullUrl)
+                    .get();
+
+            if (sendJWT) {
+                builder.header("Authorization", jwtToken);
             }
-             else {
-                request = new Request.Builder()
-                        .url(fullUrl)
-                        .get()
-                        .build();
-            }
+
+            Request request = builder.build();
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException("Unexpected code " + response);
