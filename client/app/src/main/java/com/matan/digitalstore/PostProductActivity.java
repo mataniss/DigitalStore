@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -19,6 +20,8 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.matan.digitalstore.Utils.HttpUtil;
 import com.matan.digitalstore.Utils.Utils;
+import com.matan.digitalstore.model.Product;
+import com.squareup.picasso.Picasso;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,9 +42,11 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 public class PostProductActivity extends AppCompatActivity {
+    private TextView activityTitle;
     private EditText name, description, quantity, price;
     private ImageView imageView;
     private Uri imageUri = null;
+    private Product product;
     Button uploadButton;
     Button submitButton;
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -57,13 +62,27 @@ public class PostProductActivity extends AppCompatActivity {
             return insets;
         });
         name = findViewById(R.id.productName);
+        activityTitle = findViewById(R.id.post_product_title);
         description = findViewById(R.id.productDescription);
         quantity = findViewById(R.id.productQuantity);
         price = findViewById(R.id.productPrice);
         imageView = findViewById(R.id.productImage);
         uploadButton = findViewById(R.id.uploadButton);
         submitButton = findViewById(R.id.submitButton);
-
+        //if the user wants to edit an existing product, we'll get it from the product property.
+        product = getIntent().getParcelableExtra("product");
+        if(product!= null){
+            activityTitle.setText("Edit an existing item");
+            name.setText(product.getName());
+            description.setText(product.getDescription());
+            quantity.setText(product.getQuantity()+"");
+            price.setText(product.getPrice()+"");
+            String image = product.getImage();
+            if(image!=null){
+                String imageURL = HttpUtil.getImageURL(image);
+                Picasso.get().load(imageURL).into(imageView);
+            }
+        }
         uploadButton.setOnClickListener(v -> showSelectImageDialog());
         submitButton.setOnClickListener(v -> submitProduct());
     }
@@ -168,8 +187,17 @@ public class PostProductActivity extends AppCompatActivity {
                 json.put("price", price.getText());
                 json.put("quantity", quantity.getText());
                 json.put("description", description.getText());
-                ResponseBody responseBody = HttpUtil.postRequest("products/",json);
-                productID = Long.valueOf(responseBody.string());
+                if(product==null){
+                    //user want to post a new product
+                    ResponseBody responseBody = HttpUtil.postRequest("products/",json);
+                    productID = Long.valueOf(responseBody.string());
+                }
+                else {
+                    //User want to update a product, send a put request
+                    json.put("image",product.getImage());
+                    ResponseBody responseBody = HttpUtil.putRequest("products/"+product.getId(),json);
+                    productID = product.getId();
+                }
                 // if the product was posted successfully, upload the image if necessary
                 if(imageUri != null){
                     File file = Utils.uriToFile(getApplicationContext(), imageUri);

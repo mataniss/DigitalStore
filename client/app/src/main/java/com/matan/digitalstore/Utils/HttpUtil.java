@@ -17,9 +17,9 @@ public class HttpUtil {
     //parents home
 //    private static String baseURL = "http://10.0.0.147:8080/";
     //my home
-//    private static String baseURL = "http://192.168.1.147:8080/";
+    private static String baseURL = "http://192.168.1.147:8080/";
     //iphone wifi
-    private static String baseURL = "http://172.20.10.2:8080/";
+//    private static String baseURL = "http://172.20.10.2:8080/";
 
 
     private static String jwtToken;
@@ -34,6 +34,9 @@ public class HttpUtil {
         return true;
     }
 
+    /*
+     * The function extracts the user id (sub) from the jwt
+     */
     public static String extractSubject(String jwt) {
         try {
             String[] split = jwt.split("\\.");
@@ -59,13 +62,17 @@ public class HttpUtil {
         return postRequest(url, json, sendJWT);
     }
 
-    public static ResponseBody postRequest(String url, JSONObject json, boolean sendJWT) throws IOException {
+    public static RequestBody convertJsonToRequestBody(JSONObject json){
         //Convert JsonObject to JSON String
         String jsonString = json.toString();
         // Create RequestBody
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
         RequestBody requestBody = RequestBody.create(jsonString, JSON);
+        return requestBody;
+    }
 
+    public static ResponseBody postRequest(String url, JSONObject json, boolean sendJWT) throws IOException {
+        RequestBody requestBody = convertJsonToRequestBody(json);
         return postRequest(url,requestBody,sendJWT);
     }
 
@@ -91,7 +98,26 @@ public class HttpUtil {
         if (!response.isSuccessful())
             throw new IOException("Unexpected code " + response);
         return response.body();
-        }
+    }
+
+    public static ResponseBody putRequest(String url, JSONObject json) throws IOException {
+        RequestBody requestBody = convertJsonToRequestBody(json);
+        return putRequest( url, requestBody);
+    }
+
+    public static ResponseBody putRequest(String url, RequestBody requestBody) throws IOException {
+
+        String fullUrl = baseURL + url;
+        Request request = new Request.Builder()
+                    .url(fullUrl)
+                    .header("Authorization",jwtToken)
+                    .put(requestBody)
+                    .build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful())
+            throw new IOException("Unexpected code " + response);
+        return response.body();
+    }
 
     public static ResponseBody getRequest(String url) throws IOException {
         boolean sendJWT= false;
@@ -127,4 +153,8 @@ public class HttpUtil {
     public static String getImageURL(String image) {
         return baseURL +"images/"+ image;
     }
+    public static Long getUserId(){
+        return userId;
+    }
+
 }

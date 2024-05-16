@@ -1,5 +1,6 @@
 package com.matan.digitalstore;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.matan.digitalstore.Utils.HttpUtil;
 import com.matan.digitalstore.model.Product;
 import com.squareup.picasso.Picasso;
@@ -34,6 +36,7 @@ public class PurchaseActivity extends AppCompatActivity {
     private Button minusButton;
     private Button plusButton;
     private Button purchaseButton;
+    private FloatingActionButton editBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,7 @@ public class PurchaseActivity extends AppCompatActivity {
         minusButton = findViewById(R.id.minusButton);
         plusButton = findViewById(R.id.plusButton);
         purchaseButton = findViewById(R.id.purchaseButton);
+        editBtn = findViewById(R.id.edit_btn);
 
         product = getIntent().getParcelableExtra("product");
         productName.setText(product.getName());
@@ -62,6 +66,24 @@ public class PurchaseActivity extends AppCompatActivity {
         if(image != null && image.length()>0){
             String imageURL = HttpUtil.getImageURL(image);
             Picasso.get().load(imageURL).into(productImage);
+        }
+
+        Long userId = HttpUtil.getUserId();
+        if(userId!=null && userId == product.getPublisherID()){
+            //enable the user to edit his product
+            editBtn.setVisibility(View.VISIBLE);
+            //user can't buy his own product
+            purchaseButton.setEnabled(false);
+            //adding an action to the edit button
+            editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), PostProductActivity.class);
+                    intent.putExtra("product",product);
+                    startActivity(intent);
+                    finish();
+                }
+            });
         }
         selectedQuantity = 1;
         minusButton.setEnabled(false);

@@ -88,7 +88,7 @@ public class ProductRepository {
         pstmt.setLong(4, publisherID);
         pstmt.setInt(5, product.getQuantity());
         pstmt.setString(6, Utils.getCurrentDateTime());
-        pstmt.setLong(7, product.getId());
+        pstmt.setLong(7, id);
 
         // Execute the update operation
         int affectedRows = pstmt.executeUpdate();
