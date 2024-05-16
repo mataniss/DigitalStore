@@ -3,9 +3,8 @@ package com.matan.digitalstore.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-
+import android.util.Base64;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,19 +14,42 @@ import okhttp3.ResponseBody;
 
 public class HttpUtil {
     private static final OkHttpClient client = new OkHttpClient();
+    //parents home
 //    private static String baseURL = "http://10.0.0.147:8080/";
-    private static String baseURL = "http://192.168.1.147:8080/";
+    //my home
+//    private static String baseURL = "http://192.168.1.147:8080/";
+    //iphone wifi
+    private static String baseURL = "http://172.20.10.2:8080/";
+
 
     private static String jwtToken;
-
+    private static Long userId;
     public static boolean loginRequest(String username, String password) throws IOException, JSONException {
 
         JSONObject json = new JSONObject();
         json.put("username",username);
         json.put("password", password);
         jwtToken = postRequest("users/login", json,false).string();
-
+        userId = Long.valueOf(extractSubject(jwtToken));
         return true;
+    }
+
+    public static String extractSubject(String jwt) {
+        try {
+            String[] split = jwt.split("\\.");
+            if (split.length < 2) {
+                return null; // Not enough parts in the JWT
+            }
+            String payload = split[1];
+            // Decode using android.util.Base64
+            byte[] decodedBytes = Base64.decode(payload, Base64.URL_SAFE | Base64.NO_PADDING | Base64.NO_WRAP);
+            String decodedJson = new String(decodedBytes);
+            JSONObject jsonObj = new JSONObject(decodedJson);
+            return jsonObj.getString("sub");
+        } catch (Exception e) {
+            System.err.println("Failed to decode JWT: " + e.getMessage());
+            return null;
+        }
     }
 
     public static ResponseBody postRequest(String url, JSONObject json) throws IOException {
