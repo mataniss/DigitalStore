@@ -1,5 +1,6 @@
 package com.matan.api.repository;
 
+import com.matan.api.exceptions.BadRequestException;
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.Product;
 import com.matan.api.utils.Utils;
@@ -21,9 +22,9 @@ public class ProductRepository {
 
     public static final String uploadDirectory = "public/images";
     public Long saveProduct(Product product, String Authorization) throws SQLException {
-        if(product.getQuantity()<0)
-            throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
+        if(product.getQuantity()<0)
+            throw new BadRequestException("Quantity cannot be negative");
         ResultSet generatedKeys = null;
         String sql = "INSERT INTO PRODUCTS (name, description, price, publisherID, quantity, date) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -48,7 +49,7 @@ public class ProductRepository {
 
     public void updateProductQuantity(Long id , Integer quantity) throws SQLException {
         if(quantity<0)
-            throw new Error("Quantity cannot be negative");
+            throw new BadRequestException("Quantity cannot be negative");
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET  quantity = ? WHERE id = ?";
         pstmt = DBManager.getDBConnection().prepareStatement(sql);
@@ -74,9 +75,9 @@ public class ProductRepository {
     }
 
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
-        if(product.getQuantity()<0)
-            throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);
+        if(product.getQuantity()<0)
+            throw new BadRequestException("Quantity cannot be negative");
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, quantity = ?, date = ? WHERE id = ?";
         pstmt = DBManager.getDBConnection().prepareStatement(sql);

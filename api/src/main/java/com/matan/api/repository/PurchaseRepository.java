@@ -20,9 +20,9 @@ public class PurchaseRepository {
 
     public Long makePurchase(Long productID, int quantity, String Authorization) throws SQLException {
         Long generatedID = null;
+        Long buyerID = Utils.validateJWT(Authorization);
         if(quantity<0)
             throw new BadRequestException("Quantity cannot be negative");
-        Long buyerID = Utils.validateJWT(Authorization);
         Product product = productRepo.getProduct(productID);
         if(product==null)
             throw new BadRequestException("Product not found");
