@@ -1,5 +1,6 @@
 package com.matan.api.repository;
 
+import com.matan.api.exceptions.BadRequestException;
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.Product;
 import com.matan.api.model.Purchase;
@@ -20,9 +21,14 @@ public class PurchaseRepository {
     public Long makePurchase(Long productID, int quantity, String Authorization) throws SQLException {
         Long generatedID = null;
         if(quantity<0)
-            throw new Error("Quantity cannot be negative");
+            throw new BadRequestException("Quantity cannot be negative");
         Long buyerID = Utils.validateJWT(Authorization);
         Product product = productRepo.getProduct(productID);
+        if(product==null)
+            throw new BadRequestException("Product not found");
+        if(buyerID == product.getPublisherID()){
+            throw new BadRequestException("You can't buy your own product.");
+        }
         if(product.getQuantity() >= quantity){
             //create new purchase record
             generatedID = addNewPurchaseRecord(product,quantity,buyerID);
