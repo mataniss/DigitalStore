@@ -7,10 +7,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class Utils {
+
+    private static final String EMAIL_PATTERN =
+            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     public static String getCurrentDateTime() {
         // Prepare the SQL statement
@@ -63,5 +69,14 @@ public class Utils {
 
     public static String getExtension(String filename) {
         return filename.lastIndexOf(".") != -1 ? filename.substring(filename.lastIndexOf(".")) : "";
+    }
+
+
+
+    public static boolean isValidEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+        return pattern.matcher(email).matches();
     }
 }

@@ -1,5 +1,6 @@
 package com.matan.api.repository;
 
+import com.matan.api.exceptions.BadRequestException;
 import com.matan.api.exceptions.UnauthorizedException;
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.User;
@@ -15,7 +16,16 @@ import java.util.ArrayList;
 public class UsersRepository {
     public Long userSignUp(User user) throws SQLException {
         Long id = null;
+        if(user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new BadRequestException("Username is required");
+        }
+        if(user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new BadRequestException("Password is required");
+        }
+
         if(getUserByUsername(user.getUsername()) == null) {
+            if(!Utils.isValidEmail(user.getEmail()))
+                throw new BadRequestException("Invalid email address");
             String encryptedPassword = Utils.encryptPassword(user.getPassword());
             String sql = "INSERT INTO USERS (username, password, email) VALUES (?, ?, ?)";
             PreparedStatement pstmt = DBManager.getDBConnection().prepareStatement(sql);
