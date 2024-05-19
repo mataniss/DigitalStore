@@ -2,7 +2,6 @@ package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.Product;
-import com.matan.api.model.Purchase;
 import com.matan.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

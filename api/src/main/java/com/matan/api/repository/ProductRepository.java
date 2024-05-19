@@ -1,8 +1,8 @@
 package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
-import com.matan.api.utils.Utils;
 import com.matan.api.model.Product;
+import com.matan.api.utils.Utils;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class ProductRepository {
 
     public static final String uploadDirectory = "public/images";
-    public Long saveProduct(Product product,String Authorization) throws SQLException {
+    public Long saveProduct(Product product, String Authorization) throws SQLException {
         if(product.getQuantity()<0)
             throw new Error("Quantity cannot be negative");
         Long publisherID = Utils.validateJWT(Authorization);

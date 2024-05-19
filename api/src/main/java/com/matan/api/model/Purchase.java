@@ -2,11 +2,11 @@ package com.matan.api.model;
 
 import java.util.Objects;
 
-public class Purchase extends Item{
+public class Purchase extends Product {
     private Long buyerID;
 
-    public Purchase(Long id, String name, String description, String image, String date, Long publisherID, double price, Long buyerID) {
-        super(id, name, description, image, date, publisherID, price);
+    public Purchase(Long id, String name, String description, String image, String date, Long publisherID, double price, int quantity, Long buyerID) {
+        super(id, name, description, image, date, publisherID, price, quantity);
         this.buyerID = buyerID;
     }
 
