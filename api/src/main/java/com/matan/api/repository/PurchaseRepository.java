@@ -2,6 +2,7 @@ package com.matan.api.repository;
 
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.Product;
+import com.matan.api.model.Purchase;
 import com.matan.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @Repository
 public class PurchaseRepository {
@@ -56,5 +58,24 @@ public class PurchaseRepository {
         // Execute the insert operation
         Long purchaseID = DBManager.performInsertAndGetGeneratedID(pstmt);
         return purchaseID;
+    }
+
+    public ArrayList<Purchase> listPurchases() throws SQLException {
+        ArrayList<Purchase> purchases = new ArrayList<Purchase>();
+        ResultSet rs = DBManager.executeQuery("SELECT * FROM PURCHASES");
+        while (rs.next()) {
+            Long id =  rs.getLong("id");
+            String name = rs.getString("name");
+            String description = rs.getString("description");
+            String image = rs.getString("image");
+            Integer quantity = rs.getInt("quantity");
+            Double price = rs.getDouble("price");
+            String date = rs.getString("date");
+            Long publisherID = rs.getLong("publisherID");
+            Long buyerID = rs.getLong("buyerID");
+            Purchase newPurchase = new Purchase(id, name, description, image, date, publisherID, price, quantity, buyerID);
+            purchases.add(newPurchase);
+        }
+        return purchases;
     }
 }
