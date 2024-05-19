@@ -1,5 +1,6 @@
 package com.matan.api.repository;
 
+import com.matan.api.exceptions.UnauthorizedException;
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.User;
 import com.matan.api.utils.Utils;
@@ -81,11 +82,11 @@ public class UsersRepository {
                 token = Utils.generateJWT(userInDB.getId());
             }
             else {
-                throw new Error("Incorrect password");
+                throw new UnauthorizedException("Incorrect password");
             }
         }
         else {
-            throw new Error("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
         }
         return token;
     }

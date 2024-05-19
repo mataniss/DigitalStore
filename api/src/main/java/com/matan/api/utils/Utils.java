@@ -1,5 +1,6 @@
 package com.matan.api.utils;
 
+import com.matan.api.exceptions.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -56,7 +57,7 @@ public class Utils {
             return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
                 System.out.println("Token validation error: " + e.getMessage());
-            throw new Error("Invalid JWT");
+            throw new UnauthorizedException("Invalid JWT");
         }
     }
 
