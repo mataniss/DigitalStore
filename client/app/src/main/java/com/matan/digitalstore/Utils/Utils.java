@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class Utils {
+    //The function read the content of a file from a uri that was send as an argument,
+    //and returns it as a file.
     public static File uriToFile(Context context, Uri uri) {
         File file = new File(context.getCacheDir(), "temp_image");
         try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
