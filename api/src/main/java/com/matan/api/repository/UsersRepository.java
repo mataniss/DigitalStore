@@ -14,6 +14,12 @@ import java.util.ArrayList;
 
 @Repository
 public class UsersRepository {
+    /*
+    The function adds a new user to the database using the user object that was received.
+    It validates that the username and password aren't empty, and that the email is valid,
+    and then encrypts the password and saves the user data in the db.
+    If there is a problem with the user input, code 400 will be returned.
+     */
     public Long userSignUp(User user) throws SQLException {
         Long id = null;
         if(user.getUsername() == null || user.getUsername().isEmpty()) {
@@ -43,7 +49,9 @@ public class UsersRepository {
         }
         return id;
     }
-
+    /*
+    The get a user id and returns a user object with the id that was received.
+     */
     public User getUserByID(Long id) throws SQLException {
         User user = null;
         String sqlStatement = String.format("SELECT * FROM USERS WHERE id = %s", id);
@@ -53,7 +61,9 @@ public class UsersRepository {
         }
     return  user;
     }
-
+    /*
+    The get a username and returns a user object with the username that was received.
+     */
     public User getUserByUsername(String username) throws SQLException {
         User user = null;
         String sqlStatement = String.format("SELECT * FROM USERS WHERE username = '%s';", username);
@@ -64,11 +74,16 @@ public class UsersRepository {
         return  user;
     }
 
-
+    /*
+    The function returns an arraylist of user with all the user in the db
+     */
     public ArrayList<User> listUsers() throws SQLException {
         return listUsers("SELECT * FROM USERS") ;
     }
-
+    /*
+    The function gets a sql statement for querying users from the db and
+    returns an arraylist of users that match the sql query that was received
+     */
     public ArrayList<User> listUsers(String sqlStatement) throws SQLException {
         ArrayList<User> users = new ArrayList<User>();
         ResultSet rs = DBManager.executeQuery(sqlStatement);
@@ -83,7 +98,11 @@ public class UsersRepository {
         return users;
 
     }
-
+    /*
+    The function gets user credentials. It encrypts the password that was received,
+    and check if the username and encrypted password have a matching record in the db.
+    If yes, a jwt token will be returned. otherwise, code 401 will be returned for the user.
+     */
     public String login(User user) throws SQLException {
         String token = null;
         User userInDB = getUserByUsername(user.getUsername());
