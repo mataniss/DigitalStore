@@ -2,6 +2,7 @@ package com.matan.api.model;
 
 import java.util.Objects;
 
+//This class represents a product in the db
 public class Product {
     private Long id;
     private String name;

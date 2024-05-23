@@ -2,6 +2,7 @@ package com.matan.api.model;
 
 import java.util.Objects;
 
+//This class represents a purchase in the db
 public class Purchase extends Product {
     private Long buyerID;
 
