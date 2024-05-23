@@ -17,7 +17,13 @@ import java.util.ArrayList;
 public class PurchaseRepository {
     @Autowired
     private ProductRepository productRepo;
-
+    /*
+    The function gets a productId, quantity and a jwt token. The function validates all the
+    arguments that were received and performs a purchase - if there will be still items left after this
+    purchase - the function will update the quantity of the product in the db.
+    If the stock will be over after this purchase for this item the product will be removed from the
+    catalog.
+     */
     public Long makePurchase(Long productID, int quantity, String Authorization) throws SQLException {
         Long generatedID = null;
         Long buyerID = Utils.validateJWT(Authorization);
@@ -46,7 +52,10 @@ public class PurchaseRepository {
         }
         return generatedID;
     }
-
+    /*
+    The function get a product object, quantity and buyerID, and adds a new purchase record
+    in the db with the arguments that were sent.
+     */
     private Long addNewPurchaseRecord(Product product, int quantity, Long buyerID) throws SQLException {
         ResultSet generatedKeys = null;
         String sql = "INSERT INTO PURCHASES (name, description, price, publisherID, image, quantity, date, buyerID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -58,14 +67,16 @@ public class PurchaseRepository {
         pstmt.setDouble(3,  product.getPrice());
         pstmt.setLong(4,  product.getPublisherID());
         pstmt.setString(5, product.getImage());
-        pstmt.setInt(6, product.getQuantity());
+        pstmt.setInt(6, quantity);
         pstmt.setString(7, Utils.getCurrentDateTime());
         pstmt.setLong(8, buyerID);
         // Execute the insert operation
         Long purchaseID = DBManager.performInsertAndGetGeneratedID(pstmt);
         return purchaseID;
     }
-
+    /*
+    The function returns an arraylist of purchases with all the purchases that exits on the db.
+     */
     public ArrayList<Purchase> listPurchases() throws SQLException {
         ArrayList<Purchase> purchases = new ArrayList<Purchase>();
         ResultSet rs = DBManager.executeQuery("SELECT * FROM PURCHASES");
