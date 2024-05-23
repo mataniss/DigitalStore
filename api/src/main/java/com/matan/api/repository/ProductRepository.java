@@ -1,6 +1,7 @@
 package com.matan.api.repository;
 
 import com.matan.api.exceptions.BadRequestException;
+import com.matan.api.exceptions.UnauthorizedException;
 import com.matan.api.managers.DBManager;
 import com.matan.api.model.Product;
 import com.matan.api.utils.Utils;
@@ -21,6 +22,11 @@ import java.util.ArrayList;
 public class ProductRepository {
 
     public static final String uploadDirectory = "public/images";
+    /*
+    The method gets a product object and a jwt that the user sent, validates the quantity,
+    and adds a new product to the db. The publisher id will be extracted from the jwt.
+    If the quantity is negative, code 400 will be returned.
+     */
     public Long saveProduct(Product product, String Authorization) throws SQLException {
         Long publisherID = Utils.validateJWT(Authorization);
         if(product.getQuantity()<0)
@@ -42,11 +48,16 @@ public class ProductRepository {
         return productId;
     }
 
-
+    /*
+    The method get a product id and deletes the product with the id that was received from the db.
+     */
     public void deleteProduct(Long id) throws SQLException {
         DBManager.deleteRowById("PRODUCTS",id);
     }
-
+    /*
+    The function gets a product id and updates the quantity of this product in the db
+    based on the quantity that was sent.
+     */
     public void updateProductQuantity(Long id , Integer quantity) throws SQLException {
         if(quantity<0)
             throw new BadRequestException("Quantity cannot be negative");
@@ -62,7 +73,10 @@ public class ProductRepository {
         int affectedRows = pstmt.executeUpdate();
 
     }
-
+    /*
+    The function updates the image property of a product in the db based on the arguments
+    that were sent.
+     */
     public void updateProductImage(Long id , String image) throws SQLException {
         PreparedStatement pstmt = null;
         String sql = "UPDATE PRODUCTS SET  image = ? WHERE id = ?";
@@ -73,29 +87,41 @@ public class ProductRepository {
         // Execute the update operation
         int affectedRows = pstmt.executeUpdate();
     }
-
+    /*
+    The function gets a product id, a product object and a jwt. The function extracts user id from the
+    jwt and checks if he owns the product id that was received. If true, the product properties
+    will be updated based on the product object that was received.
+     */
     public void updateProduct(Long id, Product product, String Authorization) throws SQLException {
         Long publisherID = Utils.validateJWT(Authorization);
-        if(product.getQuantity()<0)
-            throw new BadRequestException("Quantity cannot be negative");
-        PreparedStatement pstmt = null;
-        String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, quantity = ?, date = ? WHERE id = ?";
-        pstmt = DBManager.getDBConnection().prepareStatement(sql);
+        Product productInDB = getProduct(id);
+        if(productInDB.getPublisherID() == publisherID){
+            if(product.getQuantity()<0)
+                throw new BadRequestException("Quantity cannot be negative");
+            PreparedStatement pstmt = null;
+            String sql = "UPDATE PRODUCTS SET name = ?, description = ?, price = ?, publisherID = ?, quantity = ?, date = ? WHERE id = ?";
+            pstmt = DBManager.getDBConnection().prepareStatement(sql);
 
-        // Set parameters for the query
-        pstmt.setString(1, product.getName());
-        pstmt.setString(2, product.getDescription());
-        pstmt.setDouble(3, product.getPrice());
-        pstmt.setLong(4, publisherID);
-        pstmt.setInt(5, product.getQuantity());
-        pstmt.setString(6, Utils.getCurrentDateTime());
-        pstmt.setLong(7, id);
+            // Set parameters for the query
+            pstmt.setString(1, product.getName());
+            pstmt.setString(2, product.getDescription());
+            pstmt.setDouble(3, product.getPrice());
+            pstmt.setLong(4, publisherID);
+            pstmt.setInt(5, product.getQuantity());
+            pstmt.setString(6, Utils.getCurrentDateTime());
+            pstmt.setLong(7, id);
 
-        // Execute the update operation
-        int affectedRows = pstmt.executeUpdate();
+            // Execute the update operation
+            int affectedRows = pstmt.executeUpdate();
+        }
+        else{
+            throw new UnauthorizedException("You are not authorized to update this product");
+        }
 
     }
-
+    /*
+    The method get a product id and returns a product object from the db with the id that was received.
+     */
     public Product getProduct(Long id) throws SQLException {
         Product product = null;
         String sqlStatement = String.format("SELECT * FROM PRODUCTS WHERE id = %s", id);
@@ -106,11 +132,16 @@ public class ProductRepository {
         return product;
     }
 
-
+    /*
+    The function returns an arraylist of products with all the products for sale in the db
+     */
     public ArrayList<Product> listProducts() throws SQLException {
         return listProducts("SELECT * FROM PRODUCTS") ;
     }
-
+    /*
+    The method gets a sql statement and returns an arraylist of products with all the products
+    that match that sql query
+     */
     public ArrayList<Product> listProducts(String sqlStatement) throws SQLException {
         ArrayList<Product> products = new ArrayList<Product>();
         ResultSet rs = DBManager.executeQuery(sqlStatement);
@@ -130,7 +161,11 @@ public class ProductRepository {
     }
 
 
-
+    /*
+    The function gets a jwt, a file and a product id. The user id will be extracted from the jwt,
+    and if he own the product, the image will be saved on the server and the file name that was generated
+    will be updated in the db for the product with this id.
+     */
     public String uploadImage(String Authorization, MultipartFile file, Long productID) throws SQLException {
         Long publisherID = Utils.validateJWT(Authorization);
         Product product = getProduct(productID);
