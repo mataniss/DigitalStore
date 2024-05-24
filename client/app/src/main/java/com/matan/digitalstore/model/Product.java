@@ -16,7 +16,9 @@ public class Product implements Parcelable {
     private double price;
     private int quantity;
 
-
+    /*This class represents a product in the catalog, it implements the Parcelable class so
+    that we would be able to send it as an extra for an activity
+     */
     public Product(Long id, String name, String description, String image, String date, Long publisherID, double price, int quantity) {
         this.id = id;
         this.name = name;
