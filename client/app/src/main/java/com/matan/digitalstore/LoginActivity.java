@@ -19,7 +19,9 @@ import com.matan.digitalstore.Utils.HttpUtil;
 import org.json.JSONException;
 
 import java.io.IOException;
-
+/*
+Activity for logging in a user into the store.
+ */
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameField;
     private EditText passwordField;

@@ -20,7 +20,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
-
+/*
+Activity for signing up a new user for the store.
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText usernameEditText;

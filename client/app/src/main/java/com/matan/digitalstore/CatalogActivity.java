@@ -25,7 +25,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
-
+/*
+Activity for displaying the products catalog for the user.
+ */
 public class CatalogActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProductAdapter adapter;
