@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /*
+    This function handles UnauthorizedException errors that are thrown in the repositories class
+    and returns status code 401 in the response with the error message.
+     */
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED) // This sets the status code to 401
     public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
@@ -16,7 +20,10 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ex.getMessage());
     }
-
+    /*
+      This function handles BadRequestException errors that are thrown in the repositories class
+      and returns status code 400 in the response with the error message.
+       */
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
