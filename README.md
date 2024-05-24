@@ -1,4 +1,5 @@
-# DigitalStore
+# Digita lStore
+
 Digital Store Project as part of a project for The Open University In Israel,
 Written by Matan Issler.
 Backend was develop in java using spring boot.
