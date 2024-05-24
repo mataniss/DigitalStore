@@ -13,12 +13,16 @@ import java.util.ArrayList;
 public class PurchaseController {
     @Autowired
     private PurchaseRepository purchaseRepo;
-
+    /*
+    This route  returns a json with an array of all the purchases that were preformed in the store.
+     */
     @GetMapping("/")
     public ArrayList<Purchase> listProducts() throws SQLException {
         return purchaseRepo.listPurchases();
     }
-
+    /*
+    This route enables a user to buy a product based on the product id that he sent.
+     */
     @GetMapping("/makePurchase/{id}")
     public Long makePurchase(@RequestParam(name = "quantity") Integer quantity,
                                 @RequestHeader String Authorization,
