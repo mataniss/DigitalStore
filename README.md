@@ -1,4 +1,4 @@
-# Digita lStore
+# Digital Store
 
 Digital Store Project as part of a project for The Open University In Israel,
 Written by Matan Issler.
