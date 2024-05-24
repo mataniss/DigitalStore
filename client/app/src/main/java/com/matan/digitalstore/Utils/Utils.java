@@ -8,7 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+/*
+The function includes all sorts of general utility
+function that are used across the project class.
+ */
 public class Utils {
     //The function read the content of a file from a uri that was send as an argument,
     //and returns it as a file.

@@ -53,7 +53,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         });
     }
-
+/*
+This thread send a post request for user sign up with the fields that the user entered.
+After a successful sing up, The user we'll be returned to the login page.
+ */
     public class SignUpAction extends AsyncTask< Integer, Integer, Long> {
         private String error;
         @Override

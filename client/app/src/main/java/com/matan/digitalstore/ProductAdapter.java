@@ -16,8 +16,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
+/*
+This class extends the RecyclerView.Adapter class and handles the products list in the catalog.
+It's used by the catalog activity.
+ */
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductItem> {
     private Context context;
     private List<Product> products;
     private LayoutInflater inflater;
@@ -30,16 +33,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         this.context = context;
     }
 
-    // inflates the row layout from xml when needed
+    // inflates the item layout from xml when needed
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProductItem onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_product, parent, false);
-        return new ViewHolder(view);
+        return new ProductItem(view);
     }
 
-    // binds the data to the TextViews in each row
+    // binds the data to the TextViews in each item
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ProductItem holder, int position) {
         Product product = products.get(position);
         holder.nameTextView.setText(product.getName());
         holder.product = product;
@@ -51,14 +54,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
     }
 
-    // total number of rows
+    // total number of items
     @Override
     public int getItemCount() {
         return products.size();
     }
 
-    // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    // This class extends the ViewHolder class and represent a specific procuct in the
+    //catalog list
+    public class ProductItem extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         Product product;
         TextView nameTextView;
@@ -66,7 +70,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         TextView quantityTextView;
         ImageView imageView;
 
-        ViewHolder(View itemView) {
+        ProductItem(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.text_name);
             priceTextView = itemView.findViewById(R.id.text_price);
@@ -74,7 +78,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             imageView = itemView.findViewById(R.id.image_product);
             itemView.setOnClickListener(this);
         }
-
+        /*
+        When clicking on specific product, we want to open a new activity that enables
+        to purchase the product. We sent the product object as an extra to the new activity
+         */
         @Override
         public void onClick(View view) {
             System.out.println("clicked on product with id "+ product.getId());
@@ -87,7 +94,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
     }
 
-    // convenience method for getting data at click position
+    //  method for getting data at click position
     Product getItem(int id) {
         return products.get(id);
     }

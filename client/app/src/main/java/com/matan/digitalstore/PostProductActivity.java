@@ -41,6 +41,9 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
+/**
+ * An Activity for purchasing or updating a product.
+ */
 public class PostProductActivity extends AppCompatActivity {
     private TextView activityTitle;
     private EditText name, description, quantity, price;
@@ -107,7 +110,9 @@ public class PostProductActivity extends AppCompatActivity {
         });
         builder.show();
     }
-
+    /*
+    The function open a new activity for choosing an image for the phone gallery
+     */
     private void chosePictureFromCamera(){
         Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto , PICK_IMAGE_REQUEST);
@@ -140,7 +145,9 @@ public class PostProductActivity extends AppCompatActivity {
         }
     }
 
-
+    /*
+    The function returns is the device has a camera, otherwise false.
+     */
     private boolean deviceHasCamera() {
         return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
@@ -157,6 +164,10 @@ public class PostProductActivity extends AppCompatActivity {
         return image;
     }
 
+    /*
+    In the function we handle the image that the user took or chose from the gallery,
+    and load it onto the ImageView of the product in the activity.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -171,11 +182,22 @@ public class PostProductActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * The function handles the click on the sumbit button - it start a new therad
+     * for uploading the product
+     */
     private void submitProduct() {
         PostProduct postProduct = new PostProduct();
         postProduct.execute();
     }
-
+    /*
+    This thread send a post request if this is a new item.
+    If this is an existing item (The user want to edit its details),
+    we'll send a put request.
+    If the user chose an image for the product,
+    it will be sent in another post request. After a successful post, the catalog activity
+    will be loaded.
+     */
     public class PostProduct extends AsyncTask< Integer, Integer, Long> {
         private String error;
         @Override

@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    //Thread for performing the user login.
     public class PerformLogin extends AsyncTask< Integer, Integer, Boolean > {
         private  String username;
         private String password;
@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
             if(result == true){
                 message = "Successful Login.";
                 Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+                //after a successful login we open the catalog activity
                 Intent i = new Intent(getApplicationContext(), CatalogActivity.class);
                 startActivity(i);
             }

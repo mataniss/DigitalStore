@@ -24,6 +24,9 @@ import java.io.IOException;
 
 import okhttp3.ResponseBody;
 
+/**
+ * An Activity for purchasing a product.
+ */
 public class PurchaseActivity extends AppCompatActivity {
 
     private int selectedQuantity;
@@ -87,6 +90,7 @@ public class PurchaseActivity extends AppCompatActivity {
         }
         selectedQuantity = 1;
         minusButton.setEnabled(false);
+        //if there is only one item in the stock, disable the plus button
         if(product.getQuantity() == 1)
             plusButton.setEnabled(false);
 
@@ -96,6 +100,7 @@ public class PurchaseActivity extends AppCompatActivity {
                 quantityText.setText(String.valueOf(selectedQuantity));
                 plusButton.setEnabled(true);
             }
+            //disable the minus button if the quantity is zero
             if(selectedQuantity == 1 )   minusButton.setEnabled(false);
                 else minusButton.setEnabled(true);
 
@@ -107,7 +112,9 @@ public class PurchaseActivity extends AppCompatActivity {
                 quantityText.setText(String.valueOf(selectedQuantity));
                 minusButton.setEnabled(true);
             }
-            if(selectedQuantity == product.getQuantity())   plusButton.setEnabled(false);
+            //disable the plus button if the quantity has reached the max quantity for this product
+            if(selectedQuantity == product.getQuantity())
+                plusButton.setEnabled(false);
             else plusButton.setEnabled(true);
         });
 
@@ -120,7 +127,10 @@ public class PurchaseActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
+This thread send a get request for purchasing this product. After a successful purchase,
+we'll return to the catalog activity.
+ */
     public class MakePurchase extends AsyncTask< Integer, Integer, Long> {
         private String error;
         @Override

@@ -43,7 +43,8 @@ public class CatalogActivity extends AppCompatActivity {
         });
 
         recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
+        // 2 columns in grid
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         plusBtn = findViewById(R.id.new_product_btn);
         plusBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +57,9 @@ public class CatalogActivity extends AppCompatActivity {
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }
+    /*
+    We want to refresh the catalog each time the activity is resumed.
+     */
     @Override
     protected  void onResume(){
         super.onResume();
@@ -63,6 +67,7 @@ public class CatalogActivity extends AppCompatActivity {
         FetchProducts fetchProducts = new FetchProducts();
         fetchProducts.execute();
     }
+    //Thread for fetching the product list
     public class FetchProducts extends AsyncTask< Integer, Integer, ArrayList<Product> > {
         private String error;
         @Override
@@ -88,6 +93,8 @@ public class CatalogActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             if(products!=null){
+                //we use the product adapter for displaying the products dynamically
+                //based on the repsonse from the server
                 adapter = new ProductAdapter(getApplicationContext(), products);
                 recyclerView.setAdapter(adapter);
             }
