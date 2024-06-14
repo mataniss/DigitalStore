@@ -18,10 +18,10 @@ import okhttp3.ResponseBody;
 public class HttpUtil {
     private static final OkHttpClient client = new OkHttpClient();
     //please define here the address of the server
-    //parents home
-//    private static String baseURL = "http://10.0.0.147:8080/";
+    //mac
+    private static String baseURL = "http://Matans-Air.lan:8080/";
     //my home
-    private static String baseURL = "http://192.168.1.147:8080/";
+//    private static String baseURL = "http://192.168.1.137:8080/";
     //iphone wifi
 //    private static String baseURL = "http://172.20.10.2:8080/";
 
